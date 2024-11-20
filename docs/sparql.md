@@ -37,7 +37,9 @@
         <td>oxygraph</td>
         <td>RUST</td>
         <td>✓</td>
-        <td>https://github.com/oxigraph/oxigraph</td>
+        <td>
+            https://github.com/oxigraph/oxigraph/tree/main/cli
+        </td>
         <td>Heavy development, based on RockDB key-value database</td>
     </tr>
     <tr>
