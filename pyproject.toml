@@ -8,6 +8,8 @@ dependencies = [
     "tqdm",
     "typer",
     
+    "pydantic",
+    
     "rdflib",
 ]
 
