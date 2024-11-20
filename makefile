@@ -2,46 +2,39 @@ VENV=.venv
 SHELL=/bin/bash
 
 python=$(VENV)/bin/python3
-pip=$(VENV)/bin/python -m pip
-pip-tools=$(VENV)/bin/python -m piptools
+uv?=uv
 
 # Utility scripts to prettify echo outputs
 bold := '\033[1m'
 sgr0 := '\033[0m'
 
+.PHONY: init
+init: venv update
 
-.PHONY: clean venv update develop install
-
-install: venv update
-
+.PHONY: clean
 clean:
-	@echo -e $(bold)Clean up virtualenv and cache directories$(sgr0)
-	@rm -rf $(VENV) *.egg-info .pytest_cache
+	@echo -e $(bold)Clean up old virtualenv and cache$(sgr0)
+	rm -rf $(VENV) *.egg-info
 
+.PHONY: venv
 venv: clean
-	@echo -e $(bold)Create a new virtualenv$(sgr0)
-	@python3 -m venv $(VENV)
-	@$(pip) install --upgrade pip pip-tools
+	@echo -e $(bold)Create virtualenv$(sgr0)
+	@$(uv) venv --python 3.12 $(VENV)
 
+.PHONY: update
 update:
 	@echo -e $(bold)Install and update requirements$(sgr0)
-	@$(pip-tools) sync 
-
-develop: update
-	@echo -e $(bold)Install and update development requirements$(sgr0)
-	$(pip) install black isort pytest
-
+	$(uv) pip sync requirements.dev.txt
+	$(uv) pip install --editable .
 
 .PHONY: requirements
+requirements: 
+	$(uv) pip compile --universal --upgrade \
+			--output-file requirements.txt pyproject.toml
+	$(uv) pip compile --universal --upgrade --extra dev \
+			--output-file requirements.dev.txt pyproject.toml
 
-requirements:
-	@echo -e $(bold)Update requirements with pip-tools$(sgr0)
-	$(VENV)/bin/pip-compile -vU \
-		--resolver backtracking \
-		--output-file requirements.txt \
-		requirements.in
 
 .PHONY: test
 test:
-	@$(python) -m pytest
-
+	$(python) -m pytest -x -p no:warnings

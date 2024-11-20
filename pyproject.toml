@@ -1,0 +1,27 @@
+[project]
+name = "PerMeA"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = [
+    "loguru",
+    "python-decouple",
+    "tqdm",
+    "typer",
+    
+    "rdflib",
+]
+
+[project.optional-dependencies]
+dev = ["black", "isort", "ipython", "pytest"]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[tool.setuptools.packages.find]
+include = ["app"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning"]
