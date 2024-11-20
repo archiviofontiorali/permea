@@ -38,3 +38,8 @@ requirements:
 .PHONY: test
 test:
 	$(python) -m pytest -x -p no:warnings
+
+
+.PHONY: db
+db:
+	docker compose -f docker-compose.yaml up -d

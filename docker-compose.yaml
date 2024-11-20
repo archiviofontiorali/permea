@@ -1,0 +1,9 @@
+services:
+  sparql:
+    container_name: permea-sparql
+    image: oxigraph/oxigraph
+    ports:
+      - "7878:7878"
+    volumes:
+      - ".data/oxigraph:/data"
+    
