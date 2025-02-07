@@ -8,8 +8,8 @@ uv?=uv
 bold := '\033[1m'
 sgr0 := '\033[0m'
 
-.PHONY: init
-init: venv update
+.PHONY: bootstrap
+bootstrap: venv update
 
 .PHONY: clean
 clean:
@@ -21,6 +21,10 @@ venv: clean
 	@echo -e $(bold)Create virtualenv$(sgr0)
 	@$(uv) venv --python 3.12 $(VENV)
 
+.PHONY: envfile
+envfile:
+	cp .env.default .env
+
 .PHONY: update
 update:
 	@echo -e $(bold)Install and update requirements$(sgr0)
@@ -28,7 +32,7 @@ update:
 	$(uv) pip install --editable .
 
 .PHONY: requirements
-requirements: 
+requirements:
 	$(uv) pip compile --universal --upgrade \
 			--output-file requirements.txt pyproject.toml
 	$(uv) pip compile --universal --upgrade --extra dev \
