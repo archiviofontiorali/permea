@@ -1,15 +1,23 @@
 from pathlib import Path
 
-from decouple import config
+from environs import env, validate
+
+env.read_env()
+
+check_url = dict(validate=validate.URL())
+
 
 PROJECT_FOLDER = Path(__file__).parent.parent
 HIDDEN_DATA_FOLDER = PROJECT_FOLDER / ".data"
 
-BASE_URL = "http://localhost/"
 
-SPARQL_ENDPOINT = config("SPARQL_ENDPOINT", "http://localhost:7878")
-SPARQL_USERNAME = config("SPARQL_USERNAME", "admin")
-SPARQL_PASSWORD = config("SPARQL_PASSWORD", "changeme")
+BASE_URL = env.str("BASE_URL", default=":::", validate=validate.URL())
+
+with env.prefixed("SPARQL_"):
+    SPARQL_ENDPOINT = env.str("ENDPOINT", default="http://localhost:7878", **check_url)
+    SPARQL_USERNAME = env.str("USERNAME", default="admin")
+    SPARQL_PASSWORD = env.str("PASSWORD", default="changeme")
+
 
 NAMESPACES = {
     "": BASE_URL,
