@@ -5,14 +5,11 @@ from decouple import config
 PROJECT_FOLDER = Path(__file__).parent.parent
 HIDDEN_DATA_FOLDER = PROJECT_FOLDER / ".data"
 
+BASE_URL = "http://localhost/"
+
 SPARQL_ENDPOINT = config("SPARQL_ENDPOINT", "http://localhost:7878")
 SPARQL_USERNAME = config("SPARQL_USERNAME", "admin")
 SPARQL_PASSWORD = config("SPARQL_PASSWORD", "changeme")
-
-SPARQL_DEFAULT_IDENTIFIER = config("SPARQL_DEFAULT_IDENTIFIER", "default")
-
-
-BASE_URL = "http://localhost/"
 
 NAMESPACES = {
     "": BASE_URL,
