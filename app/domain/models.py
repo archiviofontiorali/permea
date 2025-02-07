@@ -29,16 +29,6 @@ class Resource(Model):
         ]
 
 
-# @dataclass
-# class NamespacedURI:
-#     ns: str
-#     value: str
-#
-#     @property
-#     def uri(self):
-#         return f"{settings.NAMESPACES.get(self.ns)}{self.value}"
-
-
 @dataclass
 class Property:
     uri: URI
