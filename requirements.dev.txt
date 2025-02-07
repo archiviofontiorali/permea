@@ -76,8 +76,6 @@ pyparsing==3.2.1
     # via rdflib
 pytest==8.3.4
     # via permea (pyproject.toml)
-python-decouple==3.8
-    # via permea (pyproject.toml)
 python-dotenv==1.0.1
     # via environs
 rdflib==7.1.3
