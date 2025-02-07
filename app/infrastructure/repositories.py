@@ -1,18 +1,10 @@
-import abc
-from functools import cache, cached_property
+from functools import cache
 
 from loguru import logger
 
-from . import settings
-from .models import Person, Resource
-
-
-class PersonRepository(abc.ABC):
-    def create_person(self, person: Person, **additional_fields):
-        pass
-
-    def get_person(self, person_id: int) -> Person:
-        pass
+from app import settings
+from app.domain.models import Person
+from app.domain.repos import PersonRepository
 
 
 class SPARQLRepository(PersonRepository):
