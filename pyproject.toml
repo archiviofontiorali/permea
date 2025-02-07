@@ -3,13 +3,14 @@ name = "PerMeA"
 version = "0.0.0"
 requires-python = ">=3.12"
 dependencies = [
+    "environs",
     "loguru",
     "python-decouple",
     "tqdm",
     "typer",
-    
+
     "pydantic",
-    
+
     "sparqlwrapper",
     "rdflib",
 ]

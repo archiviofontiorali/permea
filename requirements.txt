@@ -9,12 +9,18 @@ colorama==0.4.6 ; sys_platform == 'win32'
     #   click
     #   loguru
     #   tqdm
+environs==14.1.0
+    # via permea (pyproject.toml)
 loguru==0.7.3
     # via permea (pyproject.toml)
 markdown-it-py==3.0.0
     # via rich
+marshmallow==3.26.1
+    # via environs
 mdurl==0.1.2
     # via markdown-it-py
+packaging==24.2
+    # via marshmallow
 pydantic==2.10.6
     # via permea (pyproject.toml)
 pydantic-core==2.27.2
@@ -25,6 +31,8 @@ pyparsing==3.2.1
     # via rdflib
 python-decouple==3.8
     # via permea (pyproject.toml)
+python-dotenv==1.0.1
+    # via environs
 rdflib==7.1.3
     # via
     #   permea (pyproject.toml)
