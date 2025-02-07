@@ -38,6 +38,10 @@ requirements:
 	$(uv) pip compile --universal --upgrade --extra dev \
 			--output-file requirements.dev.txt pyproject.toml
 
+.PHONY: lint
+lint:
+	$(VENV)/bin/black **/*.py
+	$(VENV)/bin/isort **/*.py
 
 .PHONY: test
 test:
