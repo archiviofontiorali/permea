@@ -1,5 +1,16 @@
 """Define the main application"""
 
+from typer import Typer
+
+from app.application.cases import PersonCase
+from app.infrastructure.repositories import MockRepository
+from app.presentation.handlers import PersonRoute
+from app.presentation.renderers import (
+    ResourceRenderer,
+    PlainResourceRenderer,
+    JSONResourceRenderer,
+)
+
 
 class Container[T]:
     def __init__(self, **kwargs: T):
@@ -11,7 +22,23 @@ class Container[T]:
 
 class App:
     def __init__(self):
-        pass
+        self.services = Container()
+        r = self.repos = Container(person=MockRepository())
+        c = self.cases = Container(person=PersonCase(repo=r.person))
 
-    def build_app(self):
-        pass
+        e = self.renderers = Container[ResourceRenderer](
+            plain=PlainResourceRenderer(),
+            json=JSONResourceRenderer(),
+        )
+
+        self.handlers = Container(
+            person=PersonRoute(c.person, base_renderer=e.plain, json_renderer=e.json)
+        )
+
+    def build_cli(self):
+        cli = Typer()
+        h = self.handlers
+
+        cli.command("person")(h.person.__call__)
+
+        return cli
