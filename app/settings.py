@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from environs import env, validate
+from rdflib.namespace import Namespace
 
 env.read_env()
 
@@ -12,6 +13,7 @@ HIDDEN_DATA_FOLDER = PROJECT_FOLDER / ".data"
 
 
 BASE_URL = env.str("BASE_URL", default=":::", validate=validate.URL())
+NAMESPACE = Namespace(BASE_URL)
 
 with env.prefixed("SPARQL_"):
     SPARQL_ENDPOINT = env.str("ENDPOINT", default="http://localhost:7878", **check_url)
