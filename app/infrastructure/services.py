@@ -3,27 +3,26 @@ from abc import ABC, abstractmethod
 from typing import Literal
 
 from loguru import logger
-from pydantic import BaseModel
 
 from app import settings
-from app.domain.models import Person
+from pydantic import BaseModel, HttpUrl
 
 
 class LinkedData(BaseModel):
-    type: Literal["uri", "literal"]
-    value: str
+    type: Literal["uri"]
+    value: HttpUrl
 
 
-SPARQLSelectResponseRow = dict[str, LinkedData]
+SPARQLSelectRow = dict[str, LinkedData]
 
 
 class SPARQLService(ABC):
     @abstractmethod
-    def update(self, query: str):
+    def select(self, query: str) -> list[SPARQLSelectRow]:
         pass
 
     @abstractmethod
-    def select(self, query: str):
+    def insert(self, query: str):
         pass
 
 
@@ -56,7 +55,7 @@ class SPARQLWrapperService(SPARQLService):
 
         return content
 
-    def select(self, query: str) -> list[SPARQLSelectResponseRow]:
+    def select(self, query: str) -> list[SPARQLSelectRow]:
         logger.debug(f"Select query:\n{query}")
         content = self._execute_query(query)
         return [
@@ -65,36 +64,7 @@ class SPARQLWrapperService(SPARQLService):
             for key, value in row.items()
         ]
 
-    def update(self, query: str):
+    def insert(self, query: str):
         logger.debug(f"Update query:\n{query}")
         response = self._execute_query(query, method="POST")
         assert response["statusCode"] == 200
-
-
-if __name__ == "__main__":
-    service = SPARQLWrapperService()
-
-    data = service.select(
-        """
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-
-        SELECT *
-        WHERE {
-            ?s ?p ?o .
-        }
-        """
-    )
-
-    person = Person(uri=":tizio_caio", first_name="Tizio", last_name="Caio")
-    service.update(
-        f"""
-        PREFIX : <http://localhost/>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-
-        INSERT DATA {{
-            {person.uri} foaf:firstName "{person.first_name}" ;
-                         foaf:lastName "{person.last_name}" .
-        }}
-        """
-    )
