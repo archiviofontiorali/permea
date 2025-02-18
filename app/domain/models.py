@@ -1,20 +1,20 @@
 from typing import Annotated
 
-from pydantic import BaseModel
-from app import settings
-
+from pydantic import BaseModel, ConfigDict
 from rdflib import URIRef as URI
 from rdflib.namespace import FOAF, RDF
 
-from pydantic import ConfigDict
+from app import settings
 
 ResourceID = str
 URIType = Annotated[URI, RDF.type]
 
 
-class Resource(BaseModel):
+class Model(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
+
+class Resource(Model):
     id: ResourceID
     type: URIType
 
