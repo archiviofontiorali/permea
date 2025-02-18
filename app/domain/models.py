@@ -27,3 +27,13 @@ class Person(Resource):
     type: URIType = FOAF.Person
     first_name: Annotated[str, FOAF.firstName]
     last_name: Annotated[str, FOAF.lastName]
+
+
+class TemplateView(Model):
+    query: str  # A SPARQL SELECT query to retrieve fields
+    view: str  # A vue.js template to render qith query data
+
+
+class TemplateForm(Model):
+    query: str  # A SPARQL INSERT query for sending data
+    form: str  # A vue.js template with a form
