@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"/>
+</head>
+<body class="helvetica sans-serif flex flex-column justify-start items-center w-100 min-vh-100">
+  
+<section id="template-form" class="measure">
+  <h1>Template</h1>
+  <form action="" method="POST" class="flex flex-column">
+    <label for="template"></label>
+    <textarea name="template" id="template" cols="30" rows="10">{{ template }}</textarea>
+    <input type="submit" value="Refresh">
+  </form>
+</section>
+
+<hr class="w-100">
+
+<section id="preview" class="measure" style="word-wrap: break-word;">
+  <h1>{{ title | default('Example') }}</h1>
+  
+  {{ main | safe }}
+</section>
+  
+</body>
+</html>
