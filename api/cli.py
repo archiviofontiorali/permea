@@ -1,5 +1,4 @@
-from app.app import App
-
+from api.app import App
 
 cli = App().build_cli()
 
