@@ -6,9 +6,9 @@ from app.application.cases import PersonCase
 from app.infrastructure.repositories import MockRepository
 from app.presentation.handlers import PersonRoute
 from app.presentation.renderers import (
-    ResourceRenderer,
-    PlainResourceRenderer,
     JSONResourceRenderer,
+    PlainResourceRenderer,
+    ResourceRenderer,
 )
 
 

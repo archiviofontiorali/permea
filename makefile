@@ -51,3 +51,7 @@ test:
 .PHONY: db
 db:
 	docker compose -f docker-compose.yaml up -d
+
+.PHONY: debug
+debug:
+	$(python) -m uvicorn app:app --reload
