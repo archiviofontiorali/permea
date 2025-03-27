@@ -15,8 +15,8 @@ dependencies = [
     "starlette",
     "uvicorn",
 
-    "sparqlwrapper",
-    "rdflib",
+    # "sparqlwrapper",
+    # "rdflib",
 ]
 
 [project.optional-dependencies]
