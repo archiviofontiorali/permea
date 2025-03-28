@@ -1,6 +1,10 @@
-<div class="card">
+<div
+    id="{{ id }}"
+    class="card absolute bg-near-black"
+    style="top: {{ top | default(0) }}px; left: {{ left | default(0) }}px;"
+>
     <div class="content">
-        <h4>Name Surname</h4>
+        <h4>Name Surname {{ top }}</h4>
         <p>Description</p>
     </div>
 </div>

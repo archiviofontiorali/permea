@@ -15,21 +15,27 @@
         />
     </head>
     <body class="white tc sans-serif">
-        <main id="main">
+        <main id="main" class="w-100 pa2">
             <h1>Hello World!</h1>
 
-            <section
-                id="card-list"
-                class="flex flex-wrap justify-center items-center w-100"
-            ></section>
-
             <button
-                hx-post="/add-card"
+                hx-post="/add-row"
                 hx-swap="beforeend"
-                hx-target="#card-list"
+                hx-target="#board-search"
+                class="ma2"
             >
                 Add card
             </button>
+
+            <section id="board" class="w-100 flex flex-row">
+                <section id="board-search" class="ba pa2 w-third"></section>
+
+                <section
+                    id="board-canvas"
+                    class="relative ba w-100 bg-black"
+                    style="flex-grow 1; min-height: 500px"
+                ></section>
+            </section>
         </main>
         {% include '_libraries.j2.html' %}
     </body>

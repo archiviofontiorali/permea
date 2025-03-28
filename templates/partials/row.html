@@ -1,0 +1,14 @@
+<div id="{{ id }}" class="w-100 ba pa2 mv2 flex flex-row">
+    <div class="content">
+        <h4>Name Surname</h4>
+        <p>Description</p>
+    </div>
+    <button
+        hx-post="/add-card"
+        hx-swap="beforeend"
+        hx-target="#board-canvas"
+        class="ma2"
+    >
+        +
+    </button>
+</div>
