@@ -1,3 +1,10 @@
 body {
     background-color: darkslategrey;
 }
+
+.card {
+    outline: 1px solid white;
+    max-width: 350px;
+    padding: 1rem;
+    margin: 1rem;
+}

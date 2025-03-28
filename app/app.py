@@ -12,8 +12,14 @@ async def homepage(request):
     return templates.TemplateResponse(request, "index.html")
 
 
+class Card:
+    async def get_card(self, request):
+        return templates.TemplateResponse(request, "partials/card.html")
+
+
 routes = [
     Route("/", endpoint=homepage),
+    Route("/add-card", endpoint=Card().get_card, methods=["POST"]),
     Mount("/", StaticFiles(directory=settings.STATIC_FOLDER), name="static"),
 ]
 
