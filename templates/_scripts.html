@@ -1,0 +1,38 @@
+<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+<script src=" https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js "></script>
+<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
+<!-- <script src="{{ url_for('static', path='/js/index.js') }}"></script> -->
+
+<script>
+    feather.replace();
+</script>
+
+<script type="module">
+    const canvas = document.getElementById("board-canvas");
+
+    interact("#board-canvas > .card").draggable({
+        // inertia: true,
+        autoScroll: true,
+        modifiers: [
+            interact.modifiers.restrictRect({
+                restriction: "parent",
+                endOnly: true,
+            }),
+        ],
+        listeners: {
+            move(event) {
+                const target = event.target;
+                let x = _.round(
+                    parseFloat(target.getAttribute("data-x") || 0) + event.dx,
+                );
+                let y = _.round(
+                    parseFloat(target.getAttribute("data-y") || 0) + event.dy,
+                );
+
+                target.style.transform = `translate(${x}px, ${y}px)`;
+                target.setAttribute("data-x", x);
+                target.setAttribute("data-y", y);
+            },
+        },
+    });
+</script>
