@@ -16,26 +16,12 @@
     </head>
 
     <body
-        class="font-sans text-black w-screen h-screen flex flex-row bg-slate-800"
+        class="font-sans text-black w-screen h-screen flex flex-row"
         x-data="{show: {search: true}}"
     >
         <section
-            class="fixed z-1 w-1/2 left-1/4 h-16 button-group flex flex-row justify-center border-2 bg-white"
-        >
-            <button
-                hx-post="/add-row"
-                hx-swap="beforeend"
-                hx-target="#board-search"
-                hx-on::after-request="feather.replace()"
-                class="border-2 p-2 m-1"
-            >
-                Add card
-            </button>
-        </section>
-
-        <section
             id="board-search"
-            class="h-full flex flex-col border-2 bg-white"
+            class="h-full flex flex-col border-4 border-e-2 bg-slate-700 p-2"
             :class="show.search ? 'w-50' : ''"
         >
             <header
@@ -53,13 +39,27 @@
                     x-show="!show.search"
                 ></i>
             </header>
+
+            <button
+                hx-post="/add-row"
+                hx-swap="beforeend"
+                hx-target="#board-search"
+                hx-on::after-request="feather.replace()"
+                class="border-2 p-2 bg-slate-500"
+            >
+                Add card
+            </button>
         </section>
 
-        <section id="board-canvas" class="flex-1 relative h-full">
+        <section
+            id="board-canvas"
+            class="flex-1 relative h-full bg-slate-900 border-4 border-s-2"
+        >
             <svg
+                id="board-edges"
                 width="100%"
                 height="100%"
-                class="absolute border-2 border-blue-800"
+                class="absolute"
             ></svg>
         </section>
 
