@@ -1,14 +1,12 @@
-<div
+<article
     id="{{ id }}"
-    class="card absolute w-50 border-2 border-slate-500 bg-slate-400 hover:bg-white"
-    style="
-        transform: translate(0px, 0px);
-        touch-action: none;
-        user-select: none;
-    "
+    class="card absolute w-50 border-2 border-slate-500 bg-slate-400 hover:bg-white touch-none select-none"
+    style="transform: translate(0px, 0px)"
 >
-    <div class="content">
-        <h4>Name Surname {{ top }}</h4>
-        <p>Description</p>
-    </div>
-</div>
+    <h1>Title</h1>
+    <p>Description</p>
+    <footer class="w-full flex flex-row justify-center">
+        <i data-feather="move"></i>
+        <i data-feather="target"></i>
+    </footer>
+</article>
