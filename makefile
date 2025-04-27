@@ -38,6 +38,10 @@ requirements:
 	$(uv) pip compile --universal --upgrade --extra dev \
 			--output-file requirements.dev.txt pyproject.toml
 
+.PHONY: demo
+demo:
+	$(VENV)/bin/uvicorn app:app --reload
+
 .PHONY: lint
 lint:
 	$(VENV)/bin/black **/*.py
