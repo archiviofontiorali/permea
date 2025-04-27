@@ -15,7 +15,10 @@
         ></script>
     </head>
 
-    <body class="font-sans text-black w-screen h-screen bg-slate-800">
+    <body
+        class="font-sans text-black w-screen h-screen flex flex-row bg-slate-800"
+        x-data="{show: {search: true}}"
+    >
         <section
             class="fixed z-1 w-1/2 left-1/4 h-16 button-group flex flex-row justify-center border-2 bg-white"
         >
@@ -32,10 +35,27 @@
 
         <section
             id="board-search"
-            class="fixed z-1 w-50 h-1/2 top-1/4 flex flex-row md:flex-col border-2 bg-white"
-        ></section>
+            class="h-full flex flex-col border-2 bg-white"
+            :class="show.search ? 'w-50' : ''"
+        >
+            <header
+                class="flex flex-row justify-end w-full"
+                x-on:click="show.search=!show.search"
+            >
+                <i
+                    data-feather="chevrons-left"
+                    class="m-2"
+                    x-show="show.search"
+                ></i>
+                <i
+                    data-feather="chevrons-right"
+                    class="m-2"
+                    x-show="!show.search"
+                ></i>
+            </header>
+        </section>
 
-        <section id="board-canvas" class="relative w-full h-full">
+        <section id="board-canvas" class="flex-1 relative h-full">
             <svg
                 width="100%"
                 height="100%"
