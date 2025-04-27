@@ -1,6 +1,8 @@
 import random
 import uuid
 
+from pydantic import BaseModel
+
 from starlette.applications import Starlette
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
@@ -9,6 +11,19 @@ from starlette.templating import Jinja2Templates
 from . import settings
 
 templates = Jinja2Templates(directory="templates")
+
+
+class LinkedOpenData(BaseModel):
+    id: int
+    title: str
+    description: str
+
+
+db = [
+    LinkedOpenData(id=0, title="title_a", description=""),
+    LinkedOpenData(id=1, title="title_b", description=""),
+    LinkedOpenData(id=2, title="title_c", description=""),
+]
 
 
 async def homepage(request):
