@@ -10,29 +10,67 @@
 <script type="module">
     const canvas = document.getElementById("board-canvas");
 
-    interact("#board-canvas > .card").draggable({
-        // inertia: true,
-        autoScroll: true,
-        modifiers: [
-            interact.modifiers.restrictRect({
-                restriction: "parent",
-                endOnly: true,
-            }),
-        ],
-        listeners: {
-            move(event) {
-                const target = event.target;
-                let x = _.round(
-                    parseFloat(target.getAttribute("data-x") || 0) + event.dx,
-                );
-                let y = _.round(
-                    parseFloat(target.getAttribute("data-y") || 0) + event.dy,
-                );
+    interact("#board-canvas > .card")
+        .resizable({
+            // inertia: true,
+            edges: { left: true, right: true, bottom: true, top: true },
+            modifiers: [
+                // keep the edges inside the parent
+                interact.modifiers.restrictEdges({
+                    outer: "parent",
+                }),
 
-                target.style.transform = `translate(${x}px, ${y}px)`;
-                target.setAttribute("data-x", x);
-                target.setAttribute("data-y", y);
+                // minimum size
+                interact.modifiers.restrictSize({
+                    min: { width: 100, height: 50 },
+                }),
+            ],
+            listeners: {
+                move(event) {
+                    const target = event.target;
+                    let x =
+                        parseFloat(target.getAttribute("data-x") || 0) +
+                        event.deltaRect.left;
+                    let y =
+                        parseFloat(target.getAttribute("data-y") || 0) +
+                        event.deltaRect.top;
+
+                    target.style.width = `${event.rect.width}px`;
+                    target.style.height = `${event.rect.height}px`;
+
+                    target.style.transform = `translate(${x}px, ${y}px)`;
+                    target.setAttribute("data-x", x);
+                    target.setAttribute("data-y", y);
+                },
             },
-        },
-    });
+        })
+        .draggable({
+            inertia: true,
+            autoScroll: true,
+            modifiers: [
+                interact.modifiers.restrictRect({
+                    restriction: "parent",
+                    endOnly: true,
+                }),
+                interact.modifiers.snap({
+                    targets: [interact.snappers.grid({ x: 30, y: 30 })],
+                    range: Infinity,
+                    relativePoints: [{ x: 0, y: 0 }],
+                }),
+            ],
+            listeners: {
+                move(event) {
+                    const target = event.target;
+                    let x =
+                        parseFloat(target.getAttribute("data-x") || 0) +
+                        event.dx;
+                    let y =
+                        parseFloat(target.getAttribute("data-y") || 0) +
+                        event.dy;
+                    target.style.transform = `translate(${x}px, ${y}px)`;
+                    target.setAttribute("data-x", x);
+                    target.setAttribute("data-y", y);
+                },
+            },
+        });
 </script>
