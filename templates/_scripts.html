@@ -70,6 +70,12 @@
                     target.style.transform = `translate(${x}px, ${y}px)`;
                     target.setAttribute("data-x", x);
                     target.setAttribute("data-y", y);
+
+                    const line = document.getElementById("svgLine");
+                    if (line) {
+                        line.setAttribute("x2", `${x}px`);
+                        line.setAttribute("y2", `${y}px`);
+                    }
                 },
             },
         });

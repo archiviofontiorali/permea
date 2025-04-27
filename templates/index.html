@@ -43,8 +43,23 @@
             ></section>
             <section
                 id="board-canvas"
-                class="w-full md:w-2/3 min-h-100 bg-blue-500"
-            ></section>
+                class="relative w-full md:w-2/3 min-h-100 bg-blue-500"
+            >
+                <svg
+                    width="100%"
+                    height="100%"
+                    class="absolute border-2 border-blue-800"
+                >
+                    <line
+                        id="svgLine"
+                        x1="0"
+                        x2="40"
+                        y1="0"
+                        y2="100"
+                        style="stroke: black"
+                    />
+                </svg>
+            </section>
         </main>
 
         <footer id="footer"></footer>
