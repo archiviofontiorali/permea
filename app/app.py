@@ -30,29 +30,30 @@ async def homepage(request):
     return templates.TemplateResponse(request, "index.html")
 
 
-class Card:
-    async def create_edge(self, request):
-        context = {}
-        return templates.TemplateResponse(request, "partials/edge.html", context)
+async def search(request):
+    context = {"rows": db}
+    return templates.TemplateResponse(request, "partials/search.html", context)
 
-    async def get_row(self, request):
-        context = {"id": uuid.uuid4()}
-        return templates.TemplateResponse(request, "partials/row.html", context)
 
-    async def get_card(self, request):
-        context = {
-            "id": uuid.uuid4(),
-            "top": random.randint(0, 30),
-            "left": random.randint(0, 30),
-        }
-        return templates.TemplateResponse(request, "partials/card.html", context)
+async def create_node(request):
+    context = {
+        "lod": db[request.path_params["id"]],
+        "top": random.randint(0, 100),
+        "left": random.randint(0, 100),
+    }
+    return templates.TemplateResponse(request, "partials/card.html", context)
+
+
+async def create_edge(request):
+    context = {}
+    return templates.TemplateResponse(request, "partials/edge.html", context)
 
 
 routes = [
     Route("/", endpoint=homepage),
-    Route("/add-row", endpoint=Card().get_row, methods=["POST"]),
-    Route("/add-card", endpoint=Card().get_card, methods=["POST"]),
-    Route("/edge", endpoint=Card().create_edge, methods=["POST"]),
+    Route("/search", endpoint=search),
+    Route("/node/{id:int}", endpoint=create_node, methods=["POST"]),
+    Route("/edge/{start:int}", endpoint=create_edge, methods=["POST"]),
     Mount("/", StaticFiles(directory=settings.STATIC_FOLDER), name="static"),
 ]
 

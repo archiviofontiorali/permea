@@ -1,9 +1,11 @@
 <article
-  id="{{ id }}"
+  id="lod-{{ lod.id }}"
   class="card absolute w-50 p-2 flex flex-col bg-slate-500 border-4 border-slate-400 hover:border-slate-300 touch-none select-none"
-  style="transform: translate(0px, 0px)">
-  <h1>Title</h1>
-  <p class="flex-1">Description</p>
+  style="transform: translate({{ left | default(0) }}px, {{ top | default(0) }}px)"
+  data-x="{{ left | default(0) }}"
+  data-y="{{ top | default(0) }}">
+  <h1>{{ lod.title }}</h1>
+  <p class="flex-1">{{ lod.description }}</p>
   <footer class="w-full flex flex-row justify-center">
     <i data-feather="move" class="m-1"></i>
     <i
