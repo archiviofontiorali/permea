@@ -16,6 +16,10 @@ async def homepage(request):
 
 
 class Card:
+    async def create_edge(self, request):
+        context = {}
+        return templates.TemplateResponse(request, "partials/edge.html", context)
+
     async def get_row(self, request):
         context = {"id": uuid.uuid4()}
         return templates.TemplateResponse(request, "partials/row.html", context)
@@ -33,6 +37,7 @@ routes = [
     Route("/", endpoint=homepage),
     Route("/add-row", endpoint=Card().get_row, methods=["POST"]),
     Route("/add-card", endpoint=Card().get_card, methods=["POST"]),
+    Route("/edge", endpoint=Card().create_edge, methods=["POST"]),
     Mount("/", StaticFiles(directory=settings.STATIC_FOLDER), name="static"),
 ]
 
