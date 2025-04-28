@@ -8,12 +8,6 @@
   <p class="flex-1">{{ lod.description }}</p>
   <footer class="w-full flex flex-row justify-center">
     <i data-feather="move" class="m-1"></i>
-    <i
-      data-feather="target"
-      class="m-1"
-      hx-post="/edge"
-      hx-swap="beforeend"
-      hx-target="#board-canvas > svg"
-      hx-select="svg *"></i>
+    <i data-feather="circle" class="m-1" data-lod="{{ lod.id }}"></i>
   </footer>
 </article>

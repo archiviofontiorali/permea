@@ -44,16 +44,10 @@ async def create_node(request):
     return templates.TemplateResponse(request, "partials/card.html", context)
 
 
-async def create_edge(request):
-    context = {}
-    return templates.TemplateResponse(request, "partials/edge.html", context)
-
-
 routes = [
     Route("/", endpoint=homepage),
     Route("/search", endpoint=search),
     Route("/node/{id:int}", endpoint=create_node, methods=["POST"]),
-    Route("/edge/{start:int}", endpoint=create_edge, methods=["POST"]),
     Mount("/", StaticFiles(directory=settings.STATIC_FOLDER), name="static"),
 ]
 
