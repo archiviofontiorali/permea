@@ -64,12 +64,23 @@
               "http://www.w3.org/2000/svg",
               "line"
             )
+            const x =
+              event.target.getBoundingClientRect().x -
+              scene.getBoundingClientRect().x
+            const y =
+              event.target.getBoundingClientRect().y -
+              scene.getBoundingClientRect().y
+
+            console.debug(x, y)
+
             line.id = `lod-${event.target.getAttribute("data-lod")}`
-            line.setAttribute("x1", event.clientX)
-            line.setAttribute("x2", event.clientX)
-            line.setAttribute("y1", event.clientY)
-            line.setAttribute("y2", event.clientY)
-            line.setAttribute("stroke", "blue")
+            line.setAttribute("x1", x)
+            line.setAttribute("x2", x)
+            line.setAttribute("y1", y)
+            line.setAttribute("y2", y)
+            line.setAttribute("stroke", "gray")
+            line.setAttribute("stroke-width", ".25rem")
+            line.setAttribute("stroke-linecap", "round")
 
             scene.appendChild(line)
           },
@@ -77,8 +88,12 @@
             const line = document.getElementById(
               `lod-${event.target.getAttribute("data-lod")}`
             )
-            line.setAttribute("x2", event.clientX)
-            line.setAttribute("y2", event.clientY)
+
+            const x = event.clientX - scene.getBoundingClientRect().x
+            const y = event.clientY - scene.getBoundingClientRect().y
+
+            line.setAttribute("x2", x)
+            line.setAttribute("y2", y)
           },
         },
       })
