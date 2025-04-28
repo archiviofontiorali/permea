@@ -9,7 +9,9 @@
 
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+      defer></script>
   </head>
 
   <body
@@ -71,8 +73,8 @@
           listeners: {
             move(event) {
               const target = event.target
-              const x = parseFloat(target.getAttribute("data-x") || 0)
-              const y = parseFloat(target.getAttribute("data-y") || 0)
+              let x = parseFloat(target.getAttribute("data-x") || 0)
+              let y = parseFloat(target.getAttribute("data-y") || 0)
 
               x += event.deltaRect.left
               y += event.deltaRect.top
