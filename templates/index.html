@@ -41,6 +41,26 @@
     <section
       id="board-canvas"
       class="flex-1 relative h-full bg-slate-900 border-4 border-s-2">
+      <svg
+        id="board-background"
+        class="absolute w-full h-full select-none pointer-events-none z-0">
+        <pattern
+          id="pattern"
+          x="10"
+          y="10"
+          width="20"
+          height="20"
+          patternUnits="userSpaceOnUse"
+          patternTransform="translate(-0.5, -0.5)">
+          <circle cx="0.5" cy="0.5" r="0.5" fill="#90a1b9"></circle>
+        </pattern>
+        <rect
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          fill="url(#pattern)"></rect>
+      </svg>
       <svg id="board-edges" width="100%" height="100%" class="absolute"></svg>
     </section>
 
@@ -114,7 +134,7 @@
 
             // minimum size
             interact.modifiers.restrictSize({
-              min: { width: 100, height: 50 },
+              min: { width: 100, height: 100 },
             }),
           ],
           listeners: {
@@ -146,7 +166,8 @@
               endOnly: true,
             }),
             interact.modifiers.snap({
-              targets: [interact.snappers.grid({ x: 30, y: 30 })],
+              targets: [interact.snappers.grid({ x: 20, y: 20 })],
+              offset: { x: 10, y: 10 },
               range: Infinity,
               relativePoints: [{ x: 0, y: 0 }],
             }),
