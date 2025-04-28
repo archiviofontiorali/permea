@@ -1,14 +1,9 @@
 import random
-import uuid
 
 from pydantic import BaseModel
-
 from starlette.applications import Starlette
-from starlette.routing import Mount, Route
-from starlette.staticfiles import StaticFiles
+from starlette.routing import Route
 from starlette.templating import Jinja2Templates
-
-from . import settings
 
 templates = Jinja2Templates(directory="templates")
 
@@ -48,7 +43,6 @@ routes = [
     Route("/", endpoint=homepage),
     Route("/search", endpoint=search),
     Route("/node/{id:int}", endpoint=create_node, methods=["POST"]),
-    Mount("/", StaticFiles(directory=settings.STATIC_FOLDER), name="static"),
 ]
 
 app = Starlette(debug=True, routes=routes)
