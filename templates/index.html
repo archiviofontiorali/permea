@@ -56,47 +56,51 @@
       const canvas = document.getElementById("board-canvas")
       const scene = document.querySelector("#board-canvas > svg")
 
-      // To Be Expanded
-      interact(".feather-circle").draggable({
-        listeners: {
-          start(event) {
-            const line = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "line"
-            )
-            const x =
-              event.target.getBoundingClientRect().x -
-              scene.getBoundingClientRect().x
-            const y =
-              event.target.getBoundingClientRect().y -
-              scene.getBoundingClientRect().y
+      interact("#board-canvas > .card > footer > .feather-circle")
+        .draggable({
+          listeners: {
+            start(event) {
+              const line = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+              )
+              const targetBBox = event.target.getBoundingClientRect()
+              const x = targetBBox.x - scene.getBoundingClientRect().x
+              const y = targetBBox.y - scene.getBoundingClientRect().y
+              const nodeID = event.target.getAttribute("data-lod")
 
-            console.debug(x, y)
+              line.setAttribute("data-head", nodeID)
+              line.setAttribute("x1", x)
+              line.setAttribute("x2", x)
+              line.setAttribute("y1", y)
+              line.setAttribute("y2", y)
+              line.setAttribute("stroke", "gray")
+              line.setAttribute("stroke-width", ".25rem")
+              line.setAttribute("stroke-linecap", "round")
 
-            line.id = `lod-${event.target.getAttribute("data-lod")}`
-            line.setAttribute("x1", x)
-            line.setAttribute("x2", x)
-            line.setAttribute("y1", y)
-            line.setAttribute("y2", y)
-            line.setAttribute("stroke", "gray")
-            line.setAttribute("stroke-width", ".25rem")
-            line.setAttribute("stroke-linecap", "round")
+              scene.appendChild(line)
+            },
+            move(event) {
+              const nodeID = event.target.getAttribute("data-lod")
+              const line = document.querySelector(`line[data-head="${nodeID}"]`)
 
-            scene.appendChild(line)
+              const x = event.clientX - scene.getBoundingClientRect().x
+              const y = event.clientY - scene.getBoundingClientRect().y
+
+              line.setAttribute("x2", x)
+              line.setAttribute("y2", y)
+            },
           },
-          move(event) {
-            const line = document.getElementById(
-              `lod-${event.target.getAttribute("data-lod")}`
-            )
+        })
+        .dropzone({
+          ondrop(event) {
+            const head = event.relatedTarget.getAttribute("data-lod")
+            const tail = event.target.getAttribute("data-lod")
+            const line = document.querySelector(`line[data-head="${head}"]`)
 
-            const x = event.clientX - scene.getBoundingClientRect().x
-            const y = event.clientY - scene.getBoundingClientRect().y
-
-            line.setAttribute("x2", x)
-            line.setAttribute("y2", y)
+            line.setAttribute("data-tail", tail)
           },
-        },
-      })
+        })
 
       interact("#board-canvas > .card")
         .resizable({
@@ -159,6 +163,23 @@
 
               target.setAttribute("data-x", x)
               target.setAttribute("data-y", y)
+
+              const heads = scene.querySelectorAll(
+                `line[data-head="${target.getAttribute("data-lod")}"]`
+              )
+
+              heads.forEach((line) => {
+                line.setAttribute("x1", x)
+                line.setAttribute("y1", y)
+              })
+
+              const tails = scene.querySelectorAll(
+                `line[data-tail="${target.getAttribute("data-lod")}"]`
+              )
+              tails.forEach((line) => {
+                line.setAttribute("x2", x)
+                line.setAttribute("y2", y)
+              })
             },
           },
         })

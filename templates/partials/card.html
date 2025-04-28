@@ -2,6 +2,7 @@
   id="lod-{{ lod.id }}"
   class="card absolute w-50 p-2 flex flex-col bg-slate-500 border-4 border-slate-400 hover:border-slate-300 touch-none select-none"
   style="transform: translate({{ left | default(0) }}px, {{ top | default(0) }}px)"
+  data-lod="{{ lod.id }}"
   data-x="{{ left | default(0) }}"
   data-y="{{ top | default(0) }}">
   <h1>{{ lod.title }}</h1>
