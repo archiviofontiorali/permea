@@ -1,16 +1,14 @@
-<ul>
-  {% for lod in rows %}
-  <li class="flex flex-row justify-between border-2 bg-slate-500 p-2 my-1">
-    {{ lod.title }}
+{% for lod in rows %}
+<article class="search-result flex flex-row justify-between p-2">
+  <p>{{ lod.title }}</p>
 
-    <button
-      hx-post="/node/{{lod.id}}"
-      hx-swap="beforeend"
-      hx-target="#board-canvas"
-      hx-on::after-request="feather.replace()"
-      class="ma2">
-      <i data-feather="plus-circle"></i>
-    </button>
-  </li>
-  {% endfor %}
-</ul>
+  <button
+    hx-post="/node/{{lod.id}}"
+    hx-swap="beforeend"
+    hx-target="#board-canvas"
+    hx-on::after-request="feather.replace()"
+    class="ma2">
+    <i data-feather="plus-circle"></i>
+  </button>
+</article>
+{% endfor %}

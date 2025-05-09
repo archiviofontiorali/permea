@@ -32,10 +32,12 @@
         class="border-2 p-2 bg-slate-500"
         hx-get="/search"
         hx-swap="beforeend"
-        hx-target="#board-search"
+        hx-target="#search-results"
         hx-on::after-request="feather.replace()">
         Search
       </button>
+
+      <section id="search-results" class="divide-y"></section>
     </section>
 
     <section
