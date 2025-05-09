@@ -75,6 +75,77 @@
     </script>
 
     <script type="module">
+      htmx
+        .ajax("POST", "/node/1", {
+          target: "#board-canvas",
+          swap: "beforeend",
+        })
+        .then(() => feather.replace())
+
+      /** Move an HTML Element */
+      function moveHTMLElement(target, dx, dy) {
+        const x = parseFloat(target.getAttribute("data-x") || 0) + dx
+        const y = parseFloat(target.getAttribute("data-y") || 0) + dy
+
+        target.style.transform = `translate(${x}px, ${y}px)`
+        target.setAttribute("data-x", x)
+        target.setAttribute("data-y", y)
+      }
+
+      function resizeHTMLElement(target, width, height, dx, dy) {
+        const x = parseFloat(target.getAttribute("data-x") || 0) + dx
+        const y = parseFloat(target.getAttribute("data-y") || 0) + dy
+
+        target.style.width = `${width}px`
+        target.style.height = `${height}px`
+
+        target.style.transform = `translate(${x}px, ${y}px)`
+
+        target.setAttribute("data-x", x)
+        target.setAttribute("data-y", y)
+      }
+
+      const mods = interact.modifiers
+      const snapToGridModifier = interact.modifiers.snap({
+        targets: [interact.snappers.grid({ x: 20, y: 20 })],
+        offset: { x: 10, y: 10 },
+        range: Infinity,
+        relativePoints: [{ x: 0, y: 0 }],
+      })
+
+      interact("#board-canvas article.canvas-node")
+        .draggable({
+          autoScroll: false, // Set to true if you want to scroll when out of bound
+          inertia: true, // Make the movement smoother
+          modifiers: [
+            snapToGridModifier,
+            mods.restrictRect({ restriction: "parent" }),
+          ],
+          listeners: {
+            move: (e) => moveHTMLElement(e.target, e.dx, e.dy),
+          },
+        })
+        .resizable({
+          edges: { left: true, right: true, bottom: true, top: true },
+          modifiers: [
+            snapToGridModifier,
+            mods.restrictSize({ min: { width: 100, height: 100 } }),
+            mods.restrictEdges({ outer: "parent" }), // keep the edges inside the parent
+          ],
+          listeners: {
+            move: (e) =>
+              resizeHTMLElement(
+                e.target,
+                e.rect.width,
+                e.rect.height,
+                e.deltaRect.left,
+                e.deltaRect.top
+              ),
+          },
+        })
+    </script>
+    <!--
+    <script type="module">
       const canvas = document.getElementById("board-canvas")
       const scene = document.querySelector("#board-canvas > svg")
 
@@ -124,68 +195,20 @@
           },
         })
 
-      interact("#board-canvas > .card")
-        .resizable({
-          // inertia: true,
-          edges: { left: true, right: true, bottom: true, top: true },
-          modifiers: [
-            // keep the edges inside the parent
-            interact.modifiers.restrictEdges({
-              outer: "parent",
-            }),
-
-            // minimum size
-            interact.modifiers.restrictSize({
-              min: { width: 100, height: 100 },
-            }),
-          ],
-          listeners: {
-            move(event) {
-              const target = event.target
-              let x = parseFloat(target.getAttribute("data-x") || 0)
-              let y = parseFloat(target.getAttribute("data-y") || 0)
-
-              x += event.deltaRect.left
-              y += event.deltaRect.top
-
-              target.style.width = `${event.rect.width}px`
-              target.style.height = `${event.rect.height}px`
-
-              target.style.transform = `translate(${x}px, ${y}px)`
-
-              target.setAttribute("data-x", x)
-              target.setAttribute("data-y", y)
-            },
-          },
-        })
+      interact("#board-canvas > ._card")
+        .resizable({})
         .draggable({
-          inertia: true,
-          autoScroll: true,
-          allowFrom: "footer > .feather-move",
-          modifiers: [
-            interact.modifiers.restrictRect({
-              restriction: "parent",
-              endOnly: true,
-            }),
-            interact.modifiers.snap({
-              targets: [interact.snappers.grid({ x: 20, y: 20 })],
-              offset: { x: 10, y: 10 },
-              range: Infinity,
-              relativePoints: [{ x: 0, y: 0 }],
-            }),
-          ],
-
           listeners: {
             move(event) {
-              const target = event.target
+              // const target = event.target
 
-              let x = parseFloat(target.getAttribute("data-x") || 0) + event.dx
-              let y = parseFloat(target.getAttribute("data-y") || 0) + event.dy
+              // let x = parseFloat(target.getAttribute("data-x") || 0) + event.dx
+              // let y = parseFloat(target.getAttribute("data-y") || 0) + event.dy
 
-              target.style.transform = `translate(${x}px, ${y}px)`
+              // target.style.transform = `translate(${x}px, ${y}px)`
 
-              target.setAttribute("data-x", x)
-              target.setAttribute("data-y", y)
+              // target.setAttribute("data-x", x)
+              // target.setAttribute("data-y", y)
 
               const heads = scene.querySelectorAll(
                 `line[data-head="${target.getAttribute("data-lod")}"]`
@@ -206,6 +229,6 @@
             },
           },
         })
-    </script>
+    </script> -->
   </body>
 </html>
