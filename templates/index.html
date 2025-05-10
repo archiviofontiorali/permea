@@ -21,20 +21,26 @@
       }
 
       .canvas-node {
-        @apply p-2 w-fit h-fit min-w-[80px] min-h-[80px];
-        @apply rounded-lg border-1 border-slate-400 hover:border-slate-300;
+        @apply w-fit h-fit min-w-[80px] min-h-[80px];
+        @apply rounded-lg border-2 border-slate-300 hover:border-slate-400;
         @apply bg-slate-500;
         @apply touch-none select-none;
       }
 
       .canvas-node-content {
         @apply flex flex-col;
+        @apply p-2 w-full h-full;
       }
 
       .canvas-node-hook {
-        @apply absolute;
-        @apply w-[1rem] h-[1rem];
-        @apply rounded-full border-2 bg-slate-700;
+        @apply absolute w-[16px] h-[16px];
+      }
+      .canvas-node-hook > div {
+        @apply rounded-full border-2 bg-red-900;
+        @apply w-[16px] h-[16px] invisible;
+      }
+      .canvas-node-hook:hover > div {
+        @apply visible;
       }
     </style>
 
@@ -151,6 +157,7 @@
         })
         .resizable({
           edges: { left: true, right: true, bottom: true, top: true },
+          ignoreFrom: ".canvas-node-hook",
           modifiers: [
             interact.modifiers.snap({
               targets: [interact.snappers.grid({ x: 20, y: 20 })],
