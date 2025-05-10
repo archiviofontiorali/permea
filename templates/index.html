@@ -29,7 +29,6 @@
 
       .canvas-node-content {
         @apply flex flex-col;
-        @apply outline-2 outline-yellow-500;
       }
 
       .canvas-node-hook {
@@ -47,21 +46,18 @@
   </head>
 
   <body
-    class="font-sans text-black w-screen h-screen flex flex-row"
+    class="font-sans w-screen h-screen flex border-4 divide-x-4"
     x-data="{show: {search: true}}">
-    <section
-      id="board-search"
-      class="h-full flex flex-col border-4 border-e-2 bg-slate-700 p-2 z-1"
+    <aside
+      id="sidebar-search"
+      class="z-1 h-full flex flex-col"
       :class="show.search ? 'w-50' : ''">
-      <header
-        class="flex flex-row justify-end w-full"
-        x-on:click="show.search=!show.search">
+      <header class="flex justify-end" x-on:click="show.search=!show.search">
         <i data-feather="chevrons-left" class="m-2" x-show="show.search"></i>
         <i data-feather="chevrons-right" class="m-2" x-show="!show.search"></i>
       </header>
 
       <button
-        class="border-2 p-2 bg-slate-500"
         hx-get="/search"
         hx-swap="beforeend"
         hx-target="#search-results"
@@ -70,18 +66,12 @@
       </button>
 
       <section id="search-results" class="divide-y"></section>
-    </section>
+    </aside>
 
-    <section
-      id="board-canvas"
-      class="flex-1 relative h-full bg-slate-900 border-4 border-s-2">
-      <svg
-        id="board-background"
-        class="absolute w-full h-full select-none pointer-events-none z-0">
+    <main id="canvas" class="relative w-full h-full">
+      <svg id="canvas-background" class="absolute w-full h-full">
         <pattern
-          id="pattern"
-          x="10"
-          y="10"
+          id="canvas-background-pattern"
           width="20"
           height="20"
           patternUnits="userSpaceOnUse"
@@ -89,14 +79,17 @@
           <circle cx="0.5" cy="0.5" r="0.5" fill="#90a1b9"></circle>
         </pattern>
         <rect
-          x="0"
-          y="0"
           width="100%"
           height="100%"
-          fill="url(#pattern)"></rect>
+          transform="translate(10, 10)"
+          fill="url(#canvas-background-pattern)"></rect>
       </svg>
-      <svg id="board-edges" width="100%" height="100%" class="absolute"></svg>
-    </section>
+      <svg id="canvas-edges" class="absolute w-full h-full"></svg>
+
+      <div id="canvas-nodes-container" class="absolute w-full h-full p-[10px]">
+        <section id="canvas-nodes" class="w-full h-full"></section>
+      </div>
+    </main>
 
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     <script src=" https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js "></script>
@@ -107,50 +100,49 @@
     </script>
 
     <script type="module">
-      htmx
-        .ajax("POST", "/node/1", {
-          target: "#board-canvas",
-          swap: "beforeend",
-        })
-        .then(() => feather.replace())
-
-      /** Move an HTML Element */
-      function moveHTMLElement(target, dx, dy) {
-        const x = parseFloat(target.getAttribute("data-x") || 0) + dx
-        const y = parseFloat(target.getAttribute("data-y") || 0) + dy
-
-        target.style.transform = `translate(${x}px, ${y}px)`
-        target.setAttribute("data-x", x)
-        target.setAttribute("data-y", y)
-      }
-
-      function resizeHTMLElement(target, width, height, dx, dy) {
-        const x = parseFloat(target.getAttribute("data-x") || 0) + dx
-        const y = parseFloat(target.getAttribute("data-y") || 0) + dy
-
-        target.style.width = `${width}px`
-        target.style.height = `${height}px`
-
-        target.style.transform = `translate(${x}px, ${y}px)`
-
-        target.setAttribute("data-x", x)
-        target.setAttribute("data-y", y)
-      }
-
-      const mods = interact.modifiers
-      const snapToGridModifier = interact.modifiers.snap({
-        targets: [interact.snappers.grid({ x: 20, y: 20 })],
-        offset: { x: 10, y: 10 },
-        range: Infinity,
-        relativePoints: [{ x: 0, y: 0 }],
+      htmx.ajax("POST", "/node/1", {
+        target: "#canvas-nodes",
+        swap: "beforeend",
       })
 
-      interact("#board-canvas article.canvas-node")
+      function round(v, precision) {
+        return Math.round(v / precision) * precision
+      }
+
+      function roundValues(event, precision = 20) {
+        const x = round(parseFloat(event.target.dataset.x) || 0, precision)
+        const y = round(parseFloat(event.target.dataset.y) || 0, precision)
+
+        Object.assign(event.target.dataset, { x: x, y: y })
+        Object.assign(event.target.style, {
+          transform: `translate(${x}px, ${y}px)`,
+          width: `${round(event.rect.width, precision)}px`,
+          height: `${round(event.rect.height, precision)}px`,
+        })
+      }
+
+      /** Move an HTML Element */
+      function moveHTMLElement(target, dx, dy, width, height) {
+        const x = parseFloat(target.dataset.x || 0) + dx
+        const y = parseFloat(target.dataset.y || 0) + dy
+
+        Object.assign(target.dataset, { x, y })
+        Object.assign(target.style, { transform: `translate(${x}px, ${y}px)` })
+        if (width) Object.assign(target.style, { width: `${width}px` })
+        if (height) Object.assign(target.style, { height: `${height}px` })
+      }
+
+      /* NOTE: modifiers sometimes don't set exact values, method
+               roundValues set on dragend/resizeend solve this problem */
+
+      const mods = interact.modifiers
+      interact("#canvas-nodes .canvas-node")
+        .on(["dragend", "resizeend"], roundValues)
         .draggable({
-          autoScroll: false, // Set to true if you want to scroll when out of bound
-          inertia: true, // Make the movement smoother
           modifiers: [
-            snapToGridModifier,
+            interact.modifiers.snap({
+              targets: [interact.snappers.grid({ x: 20, y: 20 })],
+            }),
             mods.restrictRect({ restriction: "parent" }),
           ],
           listeners: {
@@ -160,18 +152,19 @@
         .resizable({
           edges: { left: true, right: true, bottom: true, top: true },
           modifiers: [
-            snapToGridModifier,
-            mods.restrictSize({ min: { width: 100, height: 100 } }),
-            mods.restrictEdges({ outer: "parent" }), // keep the edges inside the parent
+            interact.modifiers.snap({
+              targets: [interact.snappers.grid({ x: 20, y: 20 })],
+            }),
+            mods.restrictRect({ restriction: "parent" }),
           ],
           listeners: {
             move: (e) =>
-              resizeHTMLElement(
+              moveHTMLElement(
                 e.target,
-                e.rect.width,
-                e.rect.height,
                 e.deltaRect.left,
-                e.deltaRect.top
+                e.deltaRect.top,
+                e.rect.width,
+                e.rect.height
               ),
           },
         })
@@ -232,15 +225,6 @@
         .draggable({
           listeners: {
             move(event) {
-              // const target = event.target
-
-              // let x = parseFloat(target.getAttribute("data-x") || 0) + event.dx
-              // let y = parseFloat(target.getAttribute("data-y") || 0) + event.dy
-
-              // target.style.transform = `translate(${x}px, ${y}px)`
-
-              // target.setAttribute("data-x", x)
-              // target.setAttribute("data-y", y)
 
               const heads = scene.querySelectorAll(
                 `line[data-head="${target.getAttribute("data-lod")}"]`

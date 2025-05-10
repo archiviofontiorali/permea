@@ -1,14 +1,17 @@
 <article
-  id="lod-{{ lod.id }}"
-  class="canvas-node card absolute w-50 p-2 flex flex-col bg-slate-500 rounded-lg border-4 border-slate-400 hover:border-slate-300 touch-none select-none"
+  class="canvas-node"
   style="transform: translate({{ left | default(0) }}px, {{ top | default(0) }}px)"
+  id="lod-{{ lod.id }}"
   data-lod="{{ lod.id }}"
   data-x="{{ left | default(0) }}"
   data-y="{{ top | default(0) }}">
-  <h1>{{ lod.title }}</h1>
-  <p class="flex-1">{{ lod.description }}</p>
-  <footer class="w-full flex flex-row justify-center">
-    <i data-feather="move" class="m-1"></i>
-    <i data-feather="circle" class="m-1" data-lod="{{ lod.id }}"></i>
-  </footer>
+  <article class="canvas-node-content">
+    <h1>{{ lod.title }}</h1>
+    <p class="flex-1">{{ lod.description }}</p>
+    <p>This is a node</p>
+  </article>
+  <!-- <div class="canvas-node-hook"></div> -->
+  <!-- <div class="canvas-node-hook"></div> -->
+  <!-- <div class="canvas-node-hook"></div> -->
+  <!-- <div class="canvas-node-hook"></div> -->
 </article>
