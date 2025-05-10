@@ -7,6 +7,38 @@
 
     <title>{{ title | default('app') }}</title>
 
+    <style type="text/tailwindcss">
+      #sidebar-search {
+        @apply p-2 bg-slate-700;
+      }
+
+      #canvas {
+        @apply bg-slate-900;
+      }
+
+      button {
+        @apply p-1 border-2 bg-slate-500;
+      }
+
+      .canvas-node {
+        @apply p-2 w-fit h-fit min-w-[80px] min-h-[80px];
+        @apply rounded-lg border-1 border-slate-400 hover:border-slate-300;
+        @apply bg-slate-500;
+        @apply touch-none select-none;
+      }
+
+      .canvas-node-content {
+        @apply flex flex-col;
+        @apply outline-2 outline-yellow-500;
+      }
+
+      .canvas-node-hook {
+        @apply absolute;
+        @apply w-[1rem] h-[1rem];
+        @apply rounded-full border-2 bg-slate-700;
+      }
+    </style>
+
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script
