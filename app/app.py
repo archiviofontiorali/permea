@@ -33,8 +33,8 @@ async def search(request):
 async def create_node(request):
     context = {
         "lod": db[request.path_params["id"]],
-        "top": random.randint(0, 100),
-        "left": random.randint(0, 100),
+        "top": random.randint(0, 10) * 20,
+        "left": random.randint(0, 10) * 20,
     }
     return templates.TemplateResponse(request, "partials/card.html", context)
 
