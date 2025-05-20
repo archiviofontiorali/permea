@@ -1,4 +1,4 @@
-<article
+<div
   class="canvas-node"
   style="transform: translate({{ left | default(0) }}px, {{ top | default(0) }}px)"
   id="lod-{{ lod.id }}"
@@ -12,23 +12,23 @@
   </article>
 
   <div
-    class="canvas-node-hook"
-    style="left: 0; bottom: 50%; transform: translate(-10px, +8px)">
-    <div></div>
+    class="canvas-node-hook left-0 top-1/2"
+    style="transform: translate(-10px, -8px)">
+    <div class="rounded-s-full h-[16px]"></div>
   </div>
   <div
-    class="canvas-node-hook"
-    style="right: 0; bottom: 50%; transform: translate(+10px, 8px)">
-    <div></div>
+    class="canvas-node-hook right-0 top-1/2"
+    style="transform: translate(+10px, -8px)">
+    <div class="rounded-e-full h-[16px]"></div>
   </div>
   <div
-    class="canvas-node-hook"
-    style="top: 0; left: 50%; transform: translate(-8px, -10px)">
-    <div></div>
+    class="canvas-node-hook top-0 left-1/2"
+    style="transform: translate(-8px, -10px)">
+    <div class="rounded-t-full w-[16px]"></div>
   </div>
   <div
-    class="canvas-node-hook"
-    style="bottom: 0; left: 50%; transform: translate(-8px, +10px)">
-    <div></div>
+    class="canvas-node-hook bottom-0 left-1/2"
+    style="transform: translate(-8px, 10px)">
+    <div class="rounded-b-full w-[16px]"></div>
   </div>
-</article>
+</div>

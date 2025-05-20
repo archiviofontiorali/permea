@@ -22,8 +22,8 @@
 
       .canvas-node {
         @apply w-fit h-fit min-w-[80px] min-h-[80px];
-        @apply rounded-lg border-2 border-slate-300 hover:border-slate-400;
-        @apply bg-slate-500;
+        @apply rounded-lg border-2 bg-slate-500;
+        @apply border-slate-300 hover:border-slate-400 active:border-slate-400;
         @apply touch-none select-none;
       }
 
@@ -33,13 +33,15 @@
       }
 
       .canvas-node-hook {
-        @apply absolute w-[16px] h-[16px];
+        @apply absolute;
       }
       .canvas-node-hook > div {
-        @apply rounded-full border-2 bg-red-900;
-        @apply w-[16px] h-[16px] invisible;
+        min-width: 8px;
+        min-height: 8px;
+        @apply invisible bg-slate-400;
       }
-      .canvas-node-hook:hover > div {
+      .canvas-node-hook:hover > div,
+      .canvas-node-hook:active > div {
         @apply visible;
       }
     </style>
