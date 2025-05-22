@@ -38,7 +38,7 @@
       .canvas-node-hook > div {
         min-width: 8px;
         min-height: 8px;
-        @apply invisible bg-slate-400;
+        /* @apply invisible bg-slate-400; */
       }
       .canvas-node-hook:hover > div,
       .canvas-node-hook:active > div {
@@ -177,13 +177,9 @@
               ),
           },
         })
-    </script>
-    <!--
-    <script type="module">
-      const canvas = document.getElementById("board-canvas")
-      const scene = document.querySelector("#board-canvas > svg")
 
-      interact("#board-canvas > .card > footer > .feather-circle")
+      const canvasEdges = htmx.find("#canvas-edges")
+      interact("#canvas-nodes .canvas-node-hook")
         .draggable({
           listeners: {
             start(event) {
@@ -192,11 +188,11 @@
                 "line"
               )
               const targetBBox = event.target.getBoundingClientRect()
-              const x = targetBBox.x - scene.getBoundingClientRect().x
-              const y = targetBBox.y - scene.getBoundingClientRect().y
-              const nodeID = event.target.getAttribute("data-lod")
+              const x = targetBBox.x - canvasEdges.getBoundingClientRect().x + 8
+              const y = targetBBox.y - canvasEdges.getBoundingClientRect().y + 8
+              // const nodeID = event.target.getAttribute("data-lod")
 
-              line.setAttribute("data-head", nodeID)
+              // line.setAttribute("data-head", nodeID)
               line.setAttribute("x1", x)
               line.setAttribute("x2", x)
               line.setAttribute("y1", y)
@@ -205,15 +201,15 @@
               line.setAttribute("stroke-width", ".25rem")
               line.setAttribute("stroke-linecap", "round")
 
-              scene.appendChild(line)
+              canvasEdges.appendChild(line)
             },
             move(event) {
-              const nodeID = event.target.getAttribute("data-lod")
-              const line = document.querySelector(`line[data-head="${nodeID}"]`)
-
-              const x = event.clientX - scene.getBoundingClientRect().x
-              const y = event.clientY - scene.getBoundingClientRect().y
-
+              // const nodeID = event.target.getAttribute("data-lod")
+              // const line = document.querySelector(`line[data-head="${nodeID}"]`)
+              const lines = canvasEdges.querySelectorAll(`line`)
+              const line = lines[lines.length - 1]
+              const x = event.clientX - canvasEdges.getBoundingClientRect().x
+              const y = event.clientY - canvasEdges.getBoundingClientRect().y
               line.setAttribute("x2", x)
               line.setAttribute("y2", y)
             },
@@ -228,32 +224,6 @@
             line.setAttribute("data-tail", tail)
           },
         })
-
-      interact("#board-canvas > ._card")
-        .resizable({})
-        .draggable({
-          listeners: {
-            move(event) {
-
-              const heads = scene.querySelectorAll(
-                `line[data-head="${target.getAttribute("data-lod")}"]`
-              )
-
-              heads.forEach((line) => {
-                line.setAttribute("x1", x)
-                line.setAttribute("y1", y)
-              })
-
-              const tails = scene.querySelectorAll(
-                `line[data-tail="${target.getAttribute("data-lod")}"]`
-              )
-              tails.forEach((line) => {
-                line.setAttribute("x2", x)
-                line.setAttribute("y2", y)
-              })
-            },
-          },
-        })
-    </script> -->
+    </script>
   </body>
 </html>
