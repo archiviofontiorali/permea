@@ -40,7 +40,7 @@ requirements:
 
 .PHONY: demo
 demo:
-	$(VENV)/bin/uvicorn app:app --reload
+	$(VENV)/bin/uvicorn app:app --reload --reload-include "./**/*.html"
 
 .PHONY: lint
 lint:

@@ -9,11 +9,11 @@ dependencies = [
     "typer",
 
     "pydantic",
-    
+
     "jinja2",
     "python-multipart",
     "starlette",
-    "uvicorn",
+    "uvicorn[standard]",
 
     # "sparqlwrapper",
     # "rdflib",

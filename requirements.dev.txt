@@ -3,7 +3,9 @@
 annotated-types==0.7.0
     # via pydantic
 anyio==4.9.0
-    # via starlette
+    # via
+    #   starlette
+    #   watchfiles
 asttokens==3.0.0
     # via stack-data
 black==25.1.0
@@ -20,13 +22,16 @@ colorama==0.4.6 ; sys_platform == 'win32'
     #   loguru
     #   pytest
     #   tqdm
+    #   uvicorn
 decorator==5.2.1
     # via ipython
-environs==14.1.1
+environs==14.2.0
     # via permea (pyproject.toml)
 executing==2.2.0
     # via stack-data
 h11==0.16.0
+    # via uvicorn
+httptools==0.6.4
     # via uvicorn
 idna==3.10
     # via anyio
@@ -66,9 +71,9 @@ pathspec==0.12.1
     # via black
 pexpect==4.9.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
     # via ipython
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via black
-pluggy==1.5.0
+pluggy==1.6.0
     # via pytest
 prompt-toolkit==3.0.51
     # via ipython
@@ -76,9 +81,9 @@ ptyprocess==0.7.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
     # via pexpect
 pure-eval==0.2.3
     # via stack-data
-pydantic==2.11.3
+pydantic==2.11.5
     # via permea (pyproject.toml)
-pydantic-core==2.33.1
+pydantic-core==2.33.2
     # via pydantic
 pygments==2.19.1
     # via
@@ -88,9 +93,13 @@ pygments==2.19.1
 pytest==8.3.5
     # via permea (pyproject.toml)
 python-dotenv==1.1.0
-    # via environs
+    # via
+    #   environs
+    #   uvicorn
 python-multipart==0.0.20
     # via permea (pyproject.toml)
+pyyaml==6.0.2
+    # via uvicorn
 rich==14.0.0
     # via typer
 shellingham==1.5.4
@@ -107,7 +116,7 @@ traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
-typer==0.15.2
+typer==0.15.4
     # via permea (pyproject.toml)
 typing-extensions==4.13.2
     # via
@@ -116,11 +125,17 @@ typing-extensions==4.13.2
     #   pydantic-core
     #   typer
     #   typing-inspection
-typing-inspection==0.4.0
+typing-inspection==0.4.1
     # via pydantic
 uvicorn==0.34.2
     # via permea (pyproject.toml)
+uvloop==0.21.0 ; platform_python_implementation != 'PyPy' and sys_platform != 'cygwin' and sys_platform != 'win32'
+    # via uvicorn
+watchfiles==1.0.5
+    # via uvicorn
 wcwidth==0.2.13
     # via prompt-toolkit
+websockets==15.0.1
+    # via uvicorn
 win32-setctime==1.2.0 ; sys_platform == 'win32'
     # via loguru
