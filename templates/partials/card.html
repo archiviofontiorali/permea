@@ -1,14 +1,14 @@
 <div
   class="canvas-node"
   style="transform: translate({{ left | default(0) }}px, {{ top | default(0) }}px)"
-  id="lod-{{ lod.id }}"
+  id="{{ uuid }}"
   data-lod="{{ lod.id }}"
   data-x="{{ left | default(0) }}"
   data-y="{{ top | default(0) }}">
   <article class="canvas-node-content">
     <h1>{{ lod.title }}</h1>
     <p class="flex-1">{{ lod.description }}</p>
-    <p>This is a node</p>
+    <p class="text-xs">{{ uuid }}</p>
   </article>
 
   <div

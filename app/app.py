@@ -1,4 +1,5 @@
 import random
+import uuid
 
 from pydantic import BaseModel
 from starlette.applications import Starlette
@@ -32,6 +33,7 @@ async def search(request):
 
 async def create_node(request):
     context = {
+        "uuid": uuid.uuid4(),
         "lod": db[request.path_params["id"]],
         "top": random.randint(0, 10) * 20,
         "left": random.randint(0, 10) * 20,
