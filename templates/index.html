@@ -8,7 +8,7 @@
     <title>{{ title | default('app') }}</title>
 
     <style type="text/tailwindcss">
-      #sidebar-search {
+      #sidebar {
         @apply p-2 bg-slate-700;
       }
 
@@ -60,26 +60,31 @@
   </head>
 
   <body
-    class="font-sans w-screen h-screen flex border-4 divide-x-4"
-    x-data="{show: {search: true}}">
+    class="font-sans w-screen h-screen flex border-4"
+    x-data="{show: {desk: true, search: true}}">
+    <header
+      class="fixed top-0 left-1/2 z-100 bg-slate-500 border-4 divide-x-4 flex flex-row text-lg">
+      <ul class="flex flex-row divide-x-4">
+        <li x-on:click="show.search=true">
+          <i data-feather="search" class="m-2 w-8 h-8">Search</i>
+        </li>
+        <li x-on:click="show.search=false">
+          <i data-feather="layout" class="m-2 w-8 h-8">Canvas</i>
+        </li>
+        <li class="bg-purple-500" onclick="location.reload()">
+          <i data-feather="refresh-cw" class="m-2 w-8 h-8"></i>
+        </li>
+      </ul>
+    </header>
     <aside
-      id="sidebar-search"
-      class="z-1 h-full flex flex-col"
-      :class="show.search ? 'w-50' : ''">
-      <header class="flex justify-end" x-on:click="show.search=!show.search">
-        <i data-feather="chevrons-left" class="m-2" x-show="show.search"></i>
-        <i data-feather="chevrons-right" class="m-2" x-show="!show.search"></i>
+      id="sidebar"
+      class="z-1 h-full flex flex-col border-e-4 border-black"
+      :class="show.desk ? 'w-50' : ''">
+      <header class="flex justify-end" x-on:click="show.desk=!show.desk">
+        <i data-feather="chevrons-left" class="m-2" x-show="show.desk"></i>
+        <i data-feather="chevrons-right" class="m-2" x-show="!show.desk"></i>
       </header>
-
-      <button
-        hx-get="/search"
-        hx-swap="beforeend"
-        hx-target="#search-results"
-        hx-on::after-request="feather.replace()">
-        Search
-      </button>
-
-      <section id="search-results" class="divide-y"></section>
+      <div id="sidebar-desk" class="flex flex-row"></div>
     </aside>
 
     <main id="canvas" class="relative w-full h-full">
@@ -102,6 +107,24 @@
 
       <div id="canvas-nodes-container" class="absolute w-full h-full p-[10px]">
         <section id="canvas-nodes" class="w-full h-full"></section>
+      </div>
+      <div
+        id="search"
+        class="absolute w-full h-full bg-slate-100 py-16 flex flex-col justify-center items-center"
+        :class="show.search ? 'visible' : 'invisible'">
+        <section id="search-bar" class="flex flex-row items-center gap-2">
+          <input
+            class="rounded-full shadow-md inset-shadow-md border-gray-500 border-2 px-4 py-1 border-black bg-slate-200"
+            type="text" />
+          <button
+            class="rounded-full p-2"
+            hx-get="/search"
+            hx-swap="beforeend"
+            hx-target="#search-results">
+            <i data-feather="search"></i>
+          </button>
+        </section>
+        <section id="search-results"></section>
       </div>
     </main>
 
@@ -266,6 +289,19 @@
             line.removeAttribute("data-tail")
           },
         })
+
+      // interact("#search-results > article.search-result").draggable({
+      //   listeners: {
+      //     move(event) {
+      //       const x = event.clientX
+      //       const y = event.clientY
+      //       console.log(x, y)
+      //       Object.assign(event.target.style, {
+      //         transform: `translate(${x}px, ${y}px)`,
+      //       })
+      //     },
+      //   },
+      // })
     </script>
   </body>
 </html>
