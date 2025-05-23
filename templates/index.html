@@ -44,6 +44,12 @@
       .canvas-node-hook:active > div {
         @apply visible;
       }
+
+      .canvas-edge {
+        stroke: gray;
+        stroke-width: 0.25rem;
+        stroke-linecap: round;
+      }
     </style>
 
     <script src="https://unpkg.com/feather-icons"></script>
@@ -108,44 +114,84 @@
     </script>
 
     <script type="module">
-      htmx.ajax("POST", "/node/1", {
-        target: "#canvas-nodes",
-        swap: "beforeend",
-      })
+      htmx
+        .ajax("POST", "/node/1", {
+          target: "#canvas-nodes",
+          swap: "beforeend",
+        })
+        .then(() =>
+          htmx.ajax("POST", "/node/2", {
+            target: "#canvas-nodes",
+            swap: "beforeend",
+          })
+        )
 
-      function round(v, precision) {
+      const DEFAULT_PRECISION = 20
+      const edges = htmx.find("#canvas-edges")
+      const mods = interact.modifiers
+
+      function round(v, precision = DEFAULT_PRECISION) {
         return Math.round(v / precision) * precision
       }
 
-      function roundValues(event, precision = 20) {
-        const x = round(parseFloat(event.target.dataset.x) || 0, precision)
-        const y = round(parseFloat(event.target.dataset.y) || 0, precision)
+      /** Move or resize a Node */
+      function updateNode(node, dx, dy, width, height) {
+        const x = round(parseFloat(node.dataset.x || 0) + (dx || 0))
+        const y = round(parseFloat(node.dataset.y || 0) + (dy || 0))
+        const w = round(width)
+        const h = round(height)
 
-        Object.assign(event.target.dataset, { x: x, y: y })
-        Object.assign(event.target.style, {
+        Object.assign(node.dataset, { x, y })
+        Object.assign(node.style, {
+          width: `${w}px`,
+          height: `${h}px`,
           transform: `translate(${x}px, ${y}px)`,
-          width: `${round(event.rect.width, precision)}px`,
-          height: `${round(event.rect.height, precision)}px`,
         })
+
+        edges
+          .querySelectorAll(`line[data-head='${node.id}']`)
+          .forEach((line) => {
+            line.setAttribute("x1", round(x + w / 2 + 8, DEFAULT_PRECISION / 2))
+            line.setAttribute("y1", round(y + 9, DEFAULT_PRECISION / 2))
+          })
+        console.debug(x, y, w, h, DEFAULT_PRECISION)
       }
 
-      /** Move an HTML Element */
-      function moveHTMLElement(target, dx, dy, width, height) {
-        const x = parseFloat(target.dataset.x || 0) + dx
-        const y = parseFloat(target.dataset.y || 0) + dy
+      function createEdge(node) {
+        const line = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line"
+        )
+        const bbox = event.target.getBoundingClientRect()
+        const x = round(bbox.x - edges.getBoundingClientRect().x + 8, 10)
+        const y = round(bbox.y - edges.getBoundingClientRect().y + 8, 10)
 
-        Object.assign(target.dataset, { x, y })
-        Object.assign(target.style, { transform: `translate(${x}px, ${y}px)` })
-        if (width) Object.assign(target.style, { width: `${width}px` })
-        if (height) Object.assign(target.style, { height: `${height}px` })
+        line.classList.add("canvas-edge")
+        line.setAttribute("data-head", node.parentNode.id)
+        line.setAttribute("x1", x)
+        line.setAttribute("x2", x)
+        line.setAttribute("y1", y)
+        line.setAttribute("y2", y)
+
+        edges.appendChild(line)
       }
 
-      /* NOTE: modifiers sometimes don't set exact values, method
-               roundValues set on dragend/resizeend solve this problem */
+      function updateEdgeTail(node, x, y, rounded = false) {
+        const lines = edges.querySelectorAll(`line[data-head='${node.id}']`)
+        const line = lines[lines.length - 1]
+        x -= edges.getBoundingClientRect().x
+        y -= edges.getBoundingClientRect().y
 
-      const mods = interact.modifiers
+        if (rounded) {
+          x = round(x, DEFAULT_PRECISION / 2)
+          y = round(y, DEFAULT_PRECISION / 2)
+        }
+
+        line.setAttribute("x2", x)
+        line.setAttribute("y2", y)
+      }
+
       interact("#canvas-nodes .canvas-node")
-        .on(["dragend", "resizeend"], roundValues)
         .draggable({
           modifiers: [
             interact.modifiers.snap({
@@ -154,7 +200,8 @@
             mods.restrictRect({ restriction: "parent" }),
           ],
           listeners: {
-            move: (e) => moveHTMLElement(e.target, e.dx, e.dy),
+            move: (e) =>
+              updateNode(e.target, e.dx, e.dy, e.rect.width, e.rect.height),
           },
         })
         .resizable({
@@ -167,54 +214,24 @@
             mods.restrictRect({ restriction: "parent" }),
           ],
           listeners: {
-            move: (e) =>
-              moveHTMLElement(
-                e.target,
-                e.deltaRect.left,
-                e.deltaRect.top,
-                e.rect.width,
-                e.rect.height
-              ),
+            move: (e) => {
+              const { left, top } = e.deltaRect
+              updateNode(e.target, left, top, e.rect.width, e.rect.height)
+            },
           },
         })
 
-      const canvasEdges = htmx.find("#canvas-edges")
       interact("#canvas-nodes .canvas-node-hook")
         .draggable({
           listeners: {
-            start(event) {
-              const line = document.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "line"
-              )
-              const targetBBox = event.target.getBoundingClientRect()
-              const x = targetBBox.x - canvasEdges.getBoundingClientRect().x + 8
-              const y = targetBBox.y - canvasEdges.getBoundingClientRect().y + 8
-              // const nodeID = event.target.getAttribute("data-lod")
-
-              // line.setAttribute("data-head", nodeID)
-              line.setAttribute("x1", x)
-              line.setAttribute("x2", x)
-              line.setAttribute("y1", y)
-              line.setAttribute("y2", y)
-              line.setAttribute("stroke", "gray")
-              line.setAttribute("stroke-width", ".25rem")
-              line.setAttribute("stroke-linecap", "round")
-
-              canvasEdges.appendChild(line)
-            },
-            move(event) {
-              // const nodeID = event.target.getAttribute("data-lod")
-              // const line = document.querySelector(`line[data-head="${nodeID}"]`)
-              const lines = canvasEdges.querySelectorAll(`line`)
-              const line = lines[lines.length - 1]
-              const x = event.clientX - canvasEdges.getBoundingClientRect().x
-              const y = event.clientY - canvasEdges.getBoundingClientRect().y
-              line.setAttribute("x2", x)
-              line.setAttribute("y2", y)
-            },
+            start: (e) => createEdge(e.target),
+            move: (e) =>
+              updateEdgeTail(e.target.parentNode, e.clientX, e.clientY),
           },
         })
+        .on("dragend", (e) =>
+          updateEdgeTail(e.target.parentNode, e.clientX, e.clientY, true)
+        )
         .dropzone({
           ondrop(event) {
             const head = event.relatedTarget.getAttribute("data-lod")
