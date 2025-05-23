@@ -21,7 +21,7 @@
       }
 
       .canvas-node {
-        @apply w-fit h-fit min-w-[80px] min-h-[80px];
+        @apply absolute w-fit h-fit min-w-[80px] min-h-[80px];
         @apply rounded-lg border-2 bg-slate-500;
         @apply border-slate-300 hover:border-slate-400 active:border-slate-400;
         @apply touch-none select-none;
@@ -128,7 +128,6 @@
 
       const DEFAULT_PRECISION = 20
       const edges = htmx.find("#canvas-edges")
-      const mods = interact.modifiers
 
       function round(v, precision = DEFAULT_PRECISION) {
         return Math.round(v / precision) * precision
@@ -154,7 +153,13 @@
             line.setAttribute("x1", round(x + w / 2 + 8, DEFAULT_PRECISION / 2))
             line.setAttribute("y1", round(y + 9, DEFAULT_PRECISION / 2))
           })
-        console.debug(x, y, w, h, DEFAULT_PRECISION)
+
+        edges
+          .querySelectorAll(`line[data-tail='${node.id}']`)
+          .forEach((line) => {
+            line.setAttribute("x2", round(x + w / 2 + 8, DEFAULT_PRECISION / 2))
+            line.setAttribute("y2", round(y + 9, DEFAULT_PRECISION / 2))
+          })
       }
 
       function createEdge(node) {
@@ -163,8 +168,14 @@
           "line"
         )
         const bbox = event.target.getBoundingClientRect()
-        const x = round(bbox.x - edges.getBoundingClientRect().x + 8, 10)
-        const y = round(bbox.y - edges.getBoundingClientRect().y + 8, 10)
+        const x = round(
+          bbox.x - edges.getBoundingClientRect().x + 8,
+          DEFAULT_PRECISION / 2
+        )
+        const y = round(
+          bbox.y - edges.getBoundingClientRect().y + 8,
+          DEFAULT_PRECISION / 2
+        )
 
         line.classList.add("canvas-edge")
         line.setAttribute("data-head", node.parentNode.id)
@@ -176,29 +187,49 @@
         edges.appendChild(line)
       }
 
-      function updateEdgeTail(node, x, y, rounded = false) {
-        const lines = edges.querySelectorAll(`line[data-head='${node.id}']`)
-        const line = lines[lines.length - 1]
+      function find_last_edge(id) {
+        const lines = edges.querySelectorAll(`line[data-head='${id}']`)
+        return lines[lines.length - 1]
+      }
+
+      function moveEdgeTail(node, x, y) {
+        const line = find_last_edge(node.id)
         x -= edges.getBoundingClientRect().x
         y -= edges.getBoundingClientRect().y
+        line.setAttribute("x2", x)
+        line.setAttribute("y2", y)
+      }
 
-        if (rounded) {
-          x = round(x, DEFAULT_PRECISION / 2)
-          y = round(y, DEFAULT_PRECISION / 2)
+      function dropEdgeTail(node) {
+        const line = find_last_edge(node.id)
+
+        if (!line.getAttribute("data-tail")) {
+          line.remove()
+          return
         }
+
+        const x = round(line.getAttribute("x2"), DEFAULT_PRECISION / 2)
+        const y = round(line.getAttribute("y2"), DEFAULT_PRECISION / 2)
 
         line.setAttribute("x2", x)
         line.setAttribute("y2", y)
       }
 
+      const { modifiers, snappers } = interact
+
+      const snapToGrid = modifiers.snap({
+        targets: [
+          snappers.grid({
+            x: DEFAULT_PRECISION,
+            y: DEFAULT_PRECISION,
+          }),
+        ],
+      })
+      const restrictToParent = modifiers.restrictRect({ restriction: "parent" })
+
       interact("#canvas-nodes .canvas-node")
         .draggable({
-          modifiers: [
-            interact.modifiers.snap({
-              targets: [interact.snappers.grid({ x: 20, y: 20 })],
-            }),
-            mods.restrictRect({ restriction: "parent" }),
-          ],
+          modifiers: [snapToGrid, restrictToParent],
           listeners: {
             move: (e) =>
               updateNode(e.target, e.dx, e.dy, e.rect.width, e.rect.height),
@@ -207,12 +238,7 @@
         .resizable({
           edges: { left: true, right: true, bottom: true, top: true },
           ignoreFrom: ".canvas-node-hook",
-          modifiers: [
-            interact.modifiers.snap({
-              targets: [interact.snappers.grid({ x: 20, y: 20 })],
-            }),
-            mods.restrictRect({ restriction: "parent" }),
-          ],
+          modifiers: [snapToGrid, restrictToParent],
           listeners: {
             move: (e) => {
               const { left, top } = e.deltaRect
@@ -226,19 +252,18 @@
           listeners: {
             start: (e) => createEdge(e.target),
             move: (e) =>
-              updateEdgeTail(e.target.parentNode, e.clientX, e.clientY),
+              moveEdgeTail(e.target.parentNode, e.clientX, e.clientY),
+            end: (e) => dropEdgeTail(e.target.parentNode, e.clientX, e.clientY),
           },
         })
-        .on("dragend", (e) =>
-          updateEdgeTail(e.target.parentNode, e.clientX, e.clientY, true)
-        )
         .dropzone({
-          ondrop(event) {
-            const head = event.relatedTarget.getAttribute("data-lod")
-            const tail = event.target.getAttribute("data-lod")
-            const line = document.querySelector(`line[data-head="${head}"]`)
-
-            line.setAttribute("data-tail", tail)
+          ondragenter(e) {
+            const line = find_last_edge(e.relatedTarget.parentNode.id)
+            line.setAttribute("data-tail", e.target.parentNode.id)
+          },
+          ondragleave(e) {
+            const line = find_last_edge(e.relatedTarget.parentNode.id)
+            line.removeAttribute("data-tail")
           },
         })
     </script>
