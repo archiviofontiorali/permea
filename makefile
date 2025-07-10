@@ -38,24 +38,22 @@ requirements:
 	$(uv) pip compile --universal --upgrade --extra dev \
 			--output-file requirements.dev.txt pyproject.toml
 
-.PHONY: demo
-demo:
-	$(VENV)/bin/uvicorn app:app --reload --reload-include "./**/*.html"
 
 .PHONY: lint
 lint:
-	$(VENV)/bin/black **/*.py
-	$(VENV)/bin/isort **/*.py
+	$(VENV)/bin/black app/**/*.py
+	$(VENV)/bin/isort app/**/*.py
 
 .PHONY: test
 test:
 	$(python) -m pytest -x -p no:warnings
 
 
+
+.PHONY: demo
+demo:
+	$(python) -m uvicorn app:app --reload --reload-include "templates/**/*.html"
+
 .PHONY: db
 db:
 	docker compose -f docker-compose.yaml up -d
-
-.PHONY: debug
-debug:
-	$(python) -m uvicorn app:app --reload
