@@ -42,6 +42,8 @@ pydantic-core==2.33.2
     # via pydantic
 pygments==2.19.2
     # via rich
+pyparsing==3.2.3
+    # via rdflib
 python-dotenv==1.1.1
     # via
     #   environs
@@ -50,12 +52,16 @@ python-multipart==0.0.20
     # via permea (pyproject.toml)
 pyyaml==6.0.2
     # via uvicorn
+rdflib==7.1.4
+    # via sparqlwrapper
 rich==14.0.0
     # via typer
 shellingham==1.5.4
     # via typer
 sniffio==1.3.1
     # via anyio
+sparqlwrapper==2.0.0
+    # via permea (pyproject.toml)
 starlette==0.47.1
     # via permea (pyproject.toml)
 tqdm==4.67.1
