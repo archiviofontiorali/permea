@@ -10,29 +10,28 @@ export interface CanvasPosition {
   y: number
 }
 
-const origin: Ref<CanvasPosition> = ref({ x: 0, y: 0 })
+const canvas: Ref<CanvasPosition> = ref({ x: 0, y: 0 })
 
-function resetOrigin() {
-  origin.value.x = 0
-  origin.value.y = 0
+function moveCanvasView(x: number, y: number) {
+  canvas.value.x = x
+  canvas.value.y = y
 }
 
-function updateOrigin(x: number, y: number) {
-  origin.value.x = x
-  origin.value.y = y
+function resetCanvasView() {
+  moveCanvasView(0, 0)
 }
 </script>
 
 <template>
   <header>
-    <div class="debug relative w-full z-30 h-7">DEBUG: {{ origin }}</div>
+    <div class="debug relative w-full z-30 h-7">DEBUG: {{ canvas }}</div>
   </header>
   <main id="canvas">
     <header class="absolute pt-2 w-full z-20 top-7 flex justify-center">
-      <button @click="resetOrigin">Reset Origin</button>
+      <button @click="resetCanvasView">Reset Origin</button>
     </header>
-    <CanvasBackground :origin="origin" @update-position="updateOrigin" />
-    <CanvasItemCard class="card absolute z-10 w-60 h-90" :origin="origin" />
+    <CanvasBackground :origin="canvas" @update-position="moveCanvasView" />
+    <CanvasItemCard class="card absolute z-10 w-60 h-90" :origin="canvas" />
   </main>
 </template>
 
