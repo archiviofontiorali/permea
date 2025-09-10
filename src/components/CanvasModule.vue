@@ -59,15 +59,16 @@ function moveNode(id: string, dx: number, dy: number) {
   <CanvasBackground :view="view" @move-view="moveView" />
 
   <!-- Canvas Card Nodes -->
-  <div
-    class="draggable z-10 w-60 h-90"
-    :style="{ transform: `translate(${view.x + node.x}px, ${view.y + node.y}px)` }"
+  <CanvasDraggable
+    :reference="node.id"
+    :x="view.x + node.x"
+    :y="view.y + node.y"
     :key="node.id"
+    @move-card="moveNode"
     v-for="node in nodes"
   >
-    <CanvasDraggable :node="node" @move-card="moveNode" />
     <CanvasItemCard :item="node.item" />
-  </div>
+  </CanvasDraggable>
 </template>
 
 <style scoped>
