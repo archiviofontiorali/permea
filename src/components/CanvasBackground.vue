@@ -1,19 +1,16 @@
 <script setup lang="ts">
 import interact from 'interactjs'
-import type { CanvasPosition } from '../App.vue'
+import type { CanvasView } from './CanvasModule.vue'
 
-const { origin } = defineProps<{ origin: CanvasPosition }>()
+const { view } = defineProps<{ view: CanvasView }>()
 
 const emit = defineEmits<{
-  (e: 'update-position', x: number, y: number): void
+  (e: 'move-view', dx: number, dy: number): void
 }>()
 
 interact('#canvas-background').draggable({
   listeners: {
-    start: (event) => console.debug(`Started moving background`, event),
-    move(event) {
-      emit('update-position', origin.x + event.dx, origin.y + event.dy)
-    },
+    move: (event) => emit('move-view', event.dx, event.dy),
   },
 })
 </script>
@@ -23,8 +20,8 @@ interact('#canvas-background').draggable({
     <pattern
       id="canvas-background-pattern"
       class="color-[#D1D1D1]"
-      :x="origin.x"
-      :y="origin.y"
+      :x="view.x"
+      :y="view.y"
       width="20"
       height="20"
       patternUnits="userSpaceOnUse"
