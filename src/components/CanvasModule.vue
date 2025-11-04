@@ -9,16 +9,19 @@ import CanvasDraggable from './CanvasDraggable.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
 
+const bgCircleSize = 1
+
 const storage = useCanvasStore()
 storage.demoSetup()
 
 export interface CanvasView {
   x: number
   y: number
+  scale: number
   showAxes: boolean
 }
 
-const view: Ref<CanvasView> = ref({ x: 0, y: 0, showAxes: false })
+const view: Ref<CanvasView> = ref({ x: 0, y: 0, scale: 1.0, showAxes: false })
 resetView()
 
 interact('#canvas-background').draggable({
@@ -37,6 +40,13 @@ function resetView() {
 function toggleAxes() {
   view.value.showAxes = !view.value.showAxes
 }
+
+function zoomIn() {
+  view.value.scale = Math.max(0.5, Math.min(view.value.scale * 2, 4.0))
+}
+function zoomOut() {
+  view.value.scale = Math.max(0.5, Math.min(view.value.scale / 2, 4.0))
+}
 </script>
 
 <template>
@@ -45,6 +55,8 @@ function toggleAxes() {
     <header class="absolute center-x pt-2 z-20 left-[50%] gap-2 top-2 flex justify-center">
       <button @click="resetView">Center Canvas</button>
       <button @click="toggleAxes">{{ view.showAxes ? 'Show' : 'Hide' }} Axes</button>
+      <button @click="zoomIn">Zoom In</button>
+      <button @click="zoomOut">Zoom Out</button>
     </header>
 
     <!-- Canvas Background -->
@@ -52,27 +64,24 @@ function toggleAxes() {
       <pattern
         id="canvas-background-pattern"
         class="color-[#D1D1D1]"
-        :x="view.x + 10"
-        :y="view.y + 10"
-        width="20"
-        height="20"
+        :x="view.x"
+        :y="view.y"
+        :width="10 * view.scale"
+        :height="10 * view.scale"
         patternUnits="userSpaceOnUse"
-        patternTransform="translate(-0.5, -0.5)"
+        :patternTransform="`translate(-${bgCircleSize}, -${bgCircleSize})`"
       >
-        <circle cx="1" cy="1" r="1" fill="grey"></circle>
+        <circle :cx="bgCircleSize" :cy="bgCircleSize" :r="bgCircleSize" fill="grey"></circle>
       </pattern>
-      <rect
-        width="100%"
-        height="100%"
-        transform="translate(10, 10)"
-        fill="url(#canvas-background-pattern)"
-      ></rect>
+
+      <rect width="100%" height="100%" fill="url(#canvas-background-pattern)"></rect>
 
       <g
         id="canvas-axes"
         :class="{ hidden: view.showAxes }"
         :style="{ transform: `translate(${view.x}px, ${view.y}px)` }"
       >
+        <circle cx="0" cy="0" r="10" fill="grey"></circle>
         <line x1="-50" x2="50" y1="0" y2="0" />
         <line x1="0" x2="0" y1="-50" y2="50" />
       </g>
