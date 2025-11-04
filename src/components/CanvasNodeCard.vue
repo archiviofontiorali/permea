@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { LODItem } from './CanvasModule.vue'
+import type { Node } from '../stores/nodes.ts'
 
-const { item } = defineProps<{ item: LODItem }>()
+const { node } = defineProps<{ node: Node }>()
 </script>
 
 <template>
   <article id="card" class="flex flex-col justify-between align-middle text-center">
-    {{ item.title }}
+    {{ node.type }} -- {{ node.id }}
   </article>
 </template>
 
