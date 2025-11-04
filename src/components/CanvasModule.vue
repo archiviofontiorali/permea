@@ -4,8 +4,8 @@ import type { Ref } from 'vue'
 
 import interact from 'interactjs'
 
-// import CanvasItemCard from './CanvasItemCard.vue'
-// import CanvasDraggable from './CanvasDraggable.vue'
+import CanvasNodeCard from './CanvasNodeCard.vue'
+import CanvasDraggable from './CanvasDraggable.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
 
@@ -21,7 +21,7 @@ export interface CanvasView {
 const view: Ref<CanvasView> = ref({ x: 0, y: 0, showAxes: false })
 resetView()
 
-interact('#canvas-wrapper').draggable({
+interact('#canvas-background').draggable({
   listeners: {
     move: (event) => {
       view.value.x += event.dx
@@ -37,39 +37,6 @@ function resetView() {
 function toggleAxes() {
   view.value.showAxes = !view.value.showAxes
 }
-
-// function moveView(dx: number, dy: number) {
-//   view.value.x += dx
-//   view.value.y += dy
-// }
-
-// export interface LODItem {
-//   id: string
-//   title: string
-// }
-
-// export interface CardItem {
-//   id: string
-//   item: LODItem
-//   x: number
-//   y: number
-// }
-
-// const nodes: Ref<CardItem[]> = ref([
-//   { id: 'card-1', item: { id: 'item-1', title: 'First Item' }, x: 0, y: 0 },
-//   { id: 'card-2', item: { id: 'item-2', title: 'Second Item' }, x: 200, y: 30 },
-//   { id: 'card-3', item: { id: 'item-3', title: 'Third Item' }, x: 600, y: 50 },
-// ])
-// convert a list in a map with id as key
-// const cache = computed(() =>
-//   nodes.value.reduce((accumulator, item) => ({ ...accumulator, [item.id]: item }), {}),
-// )
-
-// function moveNode(id: string, dx: number, dy: number) {
-//   const node = storage.getNodeById(id)
-//   node.x += dx
-//   node.y += dy
-// }
 </script>
 
 <template>
@@ -113,16 +80,16 @@ function toggleAxes() {
     </svg>
 
     <!-- Canvas Card Nodes -->
-    <!-- <CanvasDraggable
-    :reference="node.id"
-    :x="view.x + node.x"
-    :y="view.y + node.y"
-    :key="node.id"
-    @move-card="storage.moveNode"
-    v-for="node in storage.nodes"
-  >
-    <CanvasItemCard :item="node" />
-  </CanvasDraggable> -->
+    <CanvasDraggable
+      :id="node.id"
+      :x="view.x + node.x"
+      :y="view.y + node.y"
+      :key="node.id"
+      @move="storage.moveNodeRelative"
+      v-for="node in storage.nodes"
+    >
+      <CanvasNodeCard :node="node" />
+    </CanvasDraggable>
   </main>
 </template>
 
