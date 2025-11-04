@@ -80,5 +80,11 @@ export const useCanvasStore = defineStore('canvas', {
       node.x = x
       node.y = y
     },
+    moveNodeRelative(id: string, dx: number = 0, dy: number = 0) {
+      const node = this.getNodeById(id)
+      if (node === undefined) throw Error()
+      node.x += dx
+      node.y += dy
+    },
   },
 })
