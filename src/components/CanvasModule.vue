@@ -73,12 +73,7 @@ function toggleAxes() {
 </script>
 
 <template>
-  <main
-    id="canvas-wrapper"
-    :width="$screen.width"
-    :height="$screen.height"
-    class="flex flex-col overflow-hidden"
-  >
+  <main id="canvas-wrapper" class="flex flex-col overflow-hidden">
     <!-- Menu for canvas position and sizing -->
     <header class="absolute center-x pt-2 z-20 left-[50%] gap-2 top-2 flex justify-center">
       <button @click="resetView">Center Canvas</button>
