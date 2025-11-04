@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Ref } from 'vue'
-
+import { BackgroundGrid as BG } from '@/constants'
 import interact from 'interactjs'
 
 import CanvasNodeCard from './CanvasNodeCard.vue'
 import CanvasDraggable from './CanvasDraggable.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
-
-const bgCircleSize = 1
 
 const storage = useCanvasStore()
 storage.demoSetup()
@@ -66,12 +64,12 @@ function zoomOut() {
         class="color-[#D1D1D1]"
         :x="view.x"
         :y="view.y"
-        :width="10 * view.scale"
-        :height="10 * view.scale"
+        :width="BG.gap * view.scale"
+        :height="BG.gap * view.scale"
         patternUnits="userSpaceOnUse"
-        :patternTransform="`translate(-${bgCircleSize}, -${bgCircleSize})`"
+        :patternTransform="`translate(-${BG.radius}, -${BG.radius})`"
       >
-        <circle :cx="bgCircleSize" :cy="bgCircleSize" :r="bgCircleSize" fill="grey"></circle>
+        <circle :cx="BG.radius" :cy="BG.radius" :r="BG.radius" fill="grey"></circle>
       </pattern>
 
       <rect width="100%" height="100%" fill="url(#canvas-background-pattern)"></rect>
@@ -81,9 +79,9 @@ function zoomOut() {
         :class="{ hidden: view.showAxes }"
         :style="{ transform: `translate(${view.x}px, ${view.y}px)` }"
       >
-        <circle cx="0" cy="0" r="10" fill="grey"></circle>
-        <line x1="-50" x2="50" y1="0" y2="0" />
-        <line x1="0" x2="0" y1="-50" y2="50" />
+        <circle cx="0" cy="0" r="7"></circle>
+        <line x1="-40" x2="40" y1="0" y2="0" />
+        <line x1="0" x2="0" y1="-40" y2="40" />
       </g>
     </svg>
 
@@ -111,6 +109,9 @@ button {
 svg g#canvas-axes line {
   stroke: var(--color-gray-500);
   stroke-width: 2;
+}
+svg g#canvas-axes circle {
+  fill: var(--color-gray-500);
 }
 
 .draggable {
