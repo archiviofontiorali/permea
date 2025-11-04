@@ -1,6 +1,6 @@
 import {} from 'vue'
 import { defineStore } from 'pinia'
-
+import { DemoConfig } from '@/constants'
 /** The canvasColor type is used to encode color data for nodes and edges. Colors attributes expect a string. Colors can be specified in hex format e.g. "#FF0000", or using one of the preset colors,  */
 type canvasColor = string
 type canvasSide = 'top' | 'right' | 'bottom' | 'left'
@@ -62,13 +62,12 @@ export const useCanvasStore = defineStore('canvas', {
       this.nodes.reduce((acc, item) => ({ ...acc, [item.id]: item }), {})
     },
     demoSetup() {
-      const offset = 300
-      for (let i = 0; i < 3; i++)
+      for (let i = 0; i < DemoConfig.nodes; i++)
         this.nodes.push({
           id: `card-${i}`,
           type: 'text',
-          x: Math.floor((2 * Math.random() - 1) * offset),
-          y: Math.floor((2 * Math.random() - 1) * offset),
+          x: Math.floor(i * (2 * Math.random() - 1) * DemoConfig.offset),
+          y: Math.floor(i * (2 * Math.random() - 1) * DemoConfig.offset),
           width: 200,
           height: 300,
           text: 'Hello World',
