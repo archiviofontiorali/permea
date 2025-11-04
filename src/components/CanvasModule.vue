@@ -40,7 +40,7 @@ function toggleAxes() {
 </script>
 
 <template>
-  <main id="canvas-wrapper" class="flex flex-col overflow-hidden">
+  <main id="canvas-wrapper" class="absolute overflow-hidden">
     <!-- Menu for canvas position and sizing -->
     <header class="absolute center-x pt-2 z-20 left-[50%] gap-2 top-2 flex justify-center">
       <button @click="resetView">Center Canvas</button>
@@ -48,7 +48,7 @@ function toggleAxes() {
     </header>
 
     <!-- Canvas Background -->
-    <svg id="canvas-background" class="absolute w-full h-full bg-[#262626]">
+    <svg id="canvas-background" class="w-full h-full bg-[#262626]">
       <pattern
         id="canvas-background-pattern"
         class="color-[#D1D1D1]"
@@ -68,7 +68,6 @@ function toggleAxes() {
         fill="url(#canvas-background-pattern)"
       ></rect>
 
-      <!-- Canvas Axes -->
       <g
         id="canvas-axes"
         :class="{ hidden: view.showAxes }"

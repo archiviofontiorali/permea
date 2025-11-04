@@ -7,7 +7,7 @@ const emit = defineEmits<{
   (e: 'move', id: string, dx: number, dy: number): void
 }>()
 
-interact('.draggable .drag-zone').draggable({
+interact('.draggable > .drag-zone').draggable({
   listeners: {
     move(event) {
       const id = event.target.dataset.id
