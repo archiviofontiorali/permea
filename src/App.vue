@@ -3,7 +3,7 @@ import Canvas from './components/CanvasModule.vue'
 </script>
 
 <template>
-  <Canvas class="w-full h-full debug" />
+  <Canvas class="w-full h-full" />
 </template>
 
 <style>

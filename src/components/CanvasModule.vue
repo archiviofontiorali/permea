@@ -58,7 +58,7 @@ function zoomOut() {
     </header>
 
     <!-- Canvas Background -->
-    <svg id="canvas-background" class="w-full h-full bg-[#262626]">
+    <svg id="canvas-background" class="absolute w-full h-full bg-[#262626]">
       <pattern
         id="canvas-background-pattern"
         class="color-[#D1D1D1]"
