@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Ref } from 'vue'
-import { BackgroundGrid as BG } from '@/constants'
+
+import { FiCrosshair, FiZoomIn, FiZoomOut, FiCircle, FiTarget } from 'vue-icons-plus/fi'
 import interact from 'interactjs'
 
+import { BackgroundGrid as BG } from '@/constants'
 import CanvasNodeCard from './CanvasNodeCard.vue'
 import CanvasDraggable from './CanvasDraggable.vue'
 
@@ -19,7 +21,7 @@ export interface CanvasView {
   showAxes: boolean
 }
 
-const view: Ref<CanvasView> = ref({ x: 0, y: 0, scale: 1.0, showAxes: false })
+const view: Ref<CanvasView> = ref({ x: 0, y: 0, scale: 1.0, showAxes: true })
 resetView()
 
 interact('#canvas-background').draggable({
@@ -50,11 +52,14 @@ function zoomOut() {
 <template>
   <main id="canvas-wrapper" class="absolute overflow-hidden">
     <!-- Menu for canvas position and sizing -->
-    <header class="absolute center-x pt-2 z-20 left-[50%] gap-2 top-2 flex justify-center">
-      <button @click="resetView">Center Canvas</button>
-      <button @click="toggleAxes">{{ view.showAxes ? 'Show' : 'Hide' }} Axes</button>
-      <button @click="zoomIn">Zoom In</button>
-      <button @click="zoomOut">Zoom Out</button>
+    <header class="absolute navbar navbar-bottom pb-2 z-20 gap-2 bottom-2 flex justify-center">
+      <button @click="zoomIn"><FiZoomIn /></button>
+      <button @click="toggleAxes">
+        <FiCrosshair v-if="view.showAxes" />
+        <FiCircle v-else />
+      </button>
+      <button @click="resetView"><FiTarget /></button>
+      <button @click="zoomOut"><FiZoomOut /></button>
     </header>
 
     <!-- Canvas Background -->
@@ -76,7 +81,7 @@ function zoomOut() {
 
       <g
         id="canvas-axes"
-        :class="{ hidden: view.showAxes }"
+        :class="{ hidden: !view.showAxes }"
         :style="{ transform: `translate(${view.x}px, ${view.y}px)` }"
       >
         <circle cx="0" cy="0" r="7"></circle>
@@ -99,11 +104,7 @@ function zoomOut() {
 </template>
 
 <style scoped>
-button {
-  background-color: var(--color-white);
-  border-radius: var(--radius-xl);
-  padding: var(--radius-xl);
-}
+@reference "@/style.css";
 
 svg g#canvas-axes line {
   stroke: var(--color-gray-500);
@@ -118,7 +119,17 @@ svg g#canvas-axes circle {
   background-color: var(--color-white);
 }
 
-.center-x {
+.navbar.navbar-bottom,
+.navbar.navbar-top {
+  left: 50%;
   transform: translate(-50%, 0);
+}
+
+.navbar button {
+  background-color: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: var(--radius-xl);
+
+  @apply text-primary-700 border-2 border-primary;
 }
 </style>

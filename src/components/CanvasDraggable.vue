@@ -20,11 +20,6 @@ const style = computed(() => ({
     scale(${view.scale})
     translate(${item.x - item.width / 2}px, ${item.y - item.height / 2}px)
   `,
-  _transform: `
-    translate(${view.x + item.x}px, ${view.y + item.y}px)
-    scale(${view.scale})
-    translate(50px, 0px)
-  `,
 }))
 
 const emit = defineEmits<{
