@@ -26,7 +26,7 @@ export interface LinkNode extends AbstractNode {
 // export interface FileNode extends Node { file: string, subpath?: string }
 // export interface GroupNode extends Node { ... }
 
-type Node = TextNode | LinkNode
+export type Node = TextNode | LinkNode
 
 // For specifics about implementation go to https://jsoncanvas.org/spec/1.0/
 export interface Edge {
@@ -75,7 +75,6 @@ export const useCanvasStore = defineStore('canvas', {
     },
     moveNode(id: string, x: number, y: number) {
       const node = this.getNodeById(id)
-
       if (node === undefined) throw Error()
 
       node.x = x
