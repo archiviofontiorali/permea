@@ -62,12 +62,13 @@ export const useCanvasStore = defineStore('canvas', {
       this.nodes.reduce((acc, item) => ({ ...acc, [item.id]: item }), {})
     },
     demoSetup() {
+      const offset = 300
       for (let i = 0; i < 3; i++)
         this.nodes.push({
           id: `card-${i}`,
           type: 'text',
-          x: Math.floor(Math.random() * 100),
-          y: Math.floor(Math.random() * 100),
+          x: Math.floor((2 * Math.random() - 1) * offset),
+          y: Math.floor((2 * Math.random() - 1) * offset),
           width: 200,
           height: 300,
           text: 'Hello World',
