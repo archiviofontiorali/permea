@@ -88,8 +88,9 @@ function zoomOut() {
     <!-- Canvas Card Nodes -->
     <CanvasDraggable
       :id="node.id"
-      :x="view.x + node.x"
-      :y="view.y + node.y"
+      :x="node.x + view.x"
+      :y="node.y + view.y"
+      :scale="view.scale"
       :key="node.id"
       @move="storage.moveNodeRelative"
       v-for="node in storage.nodes"

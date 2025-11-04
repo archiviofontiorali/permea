@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import interact from 'interactjs'
 
-const { id, x, y } = defineProps<{ id: string; x: number; y: number }>()
+const { id, x, y, scale } = defineProps<{ id: string; x: number; y: number; scale: number }>()
 
 const emit = defineEmits<{
   (e: 'move', id: string, dx: number, dy: number): void
@@ -18,7 +18,10 @@ interact('.draggable > .drag-zone').draggable({
 </script>
 
 <template>
-  <div class="draggable z-10 w-60 h-90" :style="{ transform: `translate(${x}px, ${y}px)` }">
+  <div
+    class="draggable absolute z-10 w-60 h-90 border-4 border-gray-500"
+    :style="{ transform: `translate(${x}px, ${y}px) scale(${scale}) ` }"
+  >
     <header class="drag-zone w-full h-6 touch-none select-none" :data-id="id" />
     <slot />
   </div>
