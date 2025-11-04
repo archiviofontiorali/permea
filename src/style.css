@@ -1,1 +1,6 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-primary: var(--color-slate-500);
+  --color-primary-700: var(--color-slate-700);
+}
