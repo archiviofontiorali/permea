@@ -3,4 +3,9 @@
 @theme {
   --color-primary: var(--color-slate-500);
   --color-primary-700: var(--color-slate-700);
+  --color-debug: hsla(273.41, 100%, 63.73%, 0.5);
+}
+
+.debug {
+  background-color: var(--color-debug);
 }
