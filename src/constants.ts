@@ -5,5 +5,7 @@ export const BackgroundGrid = {
 
 export const DemoConfig = {
   nodes: 3,
-  offset: 100,
+  offset: 400,
+  nodeWidth: 200,
+  nodeHeight: 300,
 }

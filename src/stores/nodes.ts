@@ -70,8 +70,8 @@ export const useCanvasStore = defineStore('canvas', {
           type: 'text',
           x: Math.floor((2 * Math.random() - 1) * DemoConfig.offset),
           y: Math.floor((2 * Math.random() - 1) * DemoConfig.offset),
-          width: 200,
-          height: 300,
+          width: DemoConfig.nodeWidth,
+          height: DemoConfig.nodeHeight,
           text: 'Hello World',
         }
         if (nNodes + i > 0)
