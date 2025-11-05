@@ -98,15 +98,17 @@ function zoomOut() {
     </svg>
 
     <!-- Canvas Card Nodes -->
-    <CanvasDraggable
-      :item="node"
-      :view="view"
-      :key="node.id"
-      @move="storage.moveNodeRelative"
-      v-for="node in storage.nodes"
-    >
-      <CanvasNodeCard :node="node" />
-    </CanvasDraggable>
+    <section id="canvas-nodes-wrapper">
+      <CanvasDraggable
+        :item="node"
+        :view="view"
+        :key="node.id"
+        @move="storage.moveNodeRelative"
+        v-for="node in storage.nodes"
+      >
+        <CanvasNodeCard :node="node" />
+      </CanvasDraggable>
+    </section>
   </main>
 </template>
 
