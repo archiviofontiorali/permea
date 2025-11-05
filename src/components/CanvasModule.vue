@@ -2,7 +2,14 @@
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 
-import { FiCrosshair, FiZoomIn, FiZoomOut, FiCircle, FiTarget } from 'vue-icons-plus/fi'
+import {
+  FiCrosshair,
+  FiZoomIn,
+  FiZoomOut,
+  FiCircle,
+  FiTarget,
+  FiPlusCircle,
+} from 'vue-icons-plus/fi'
 import interact from 'interactjs'
 
 import { BackgroundGrid as BG } from '@/constants'
@@ -12,7 +19,6 @@ import CanvasDraggable from './CanvasDraggable.vue'
 import { useCanvasStore } from '@/stores/nodes'
 
 const storage = useCanvasStore()
-storage.demoSetup()
 
 export interface CanvasView {
   x: number
@@ -53,6 +59,7 @@ function zoomOut() {
   <main id="canvas-wrapper" class="absolute overflow-hidden">
     <!-- Menu for canvas position and sizing -->
     <header class="absolute navbar navbar-bottom pb-2 z-20 gap-2 bottom-2 flex justify-center">
+      <button @click="storage.demoSetup()" class="debug"><FiPlusCircle /></button>
       <button @click="zoomIn"><FiZoomIn /></button>
       <button @click="toggleAxes">
         <FiCrosshair v-if="view.showAxes" />
@@ -131,5 +138,8 @@ svg g#canvas-axes circle {
   padding: var(--radius-xl);
 
   @apply text-primary-700 border-2 border-primary;
+}
+.navbar button.debug {
+  @apply text-purple-500 border-purple-500;
 }
 </style>
