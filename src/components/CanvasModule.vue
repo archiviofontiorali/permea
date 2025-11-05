@@ -121,11 +121,6 @@ svg g#canvas-axes circle {
   fill: var(--color-gray-500);
 }
 
-.draggable {
-  position: absolute;
-  background-color: var(--color-white);
-}
-
 .navbar.navbar-bottom,
 .navbar.navbar-top {
   left: 50%;

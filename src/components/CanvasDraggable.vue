@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import interact from 'interactjs'
+import { FiMoreHorizontal } from 'vue-icons-plus/fi'
+
 import type { CanvasView } from './CanvasModule.vue'
 
 export interface Draggable {
@@ -26,10 +29,10 @@ const emit = defineEmits<{
   (e: 'move', id: string, dx: number, dy: number): void
 }>()
 
-interact('.draggable > .drag-zone').draggable({
+interact('.draggable > .drag').draggable({
   listeners: {
     move(event) {
-      const id = event.target.dataset.id
+      const id = event.target.parentNode.dataset.id
       emit('move', id, event.dx / view.scale, event.dy / view.scale)
     },
   },
@@ -37,17 +40,21 @@ interact('.draggable > .drag-zone').draggable({
 </script>
 
 <template>
-  <div class="draggable absolute z-10 border-4 border-gray-500" :style="style">
-    <header class="drag-zone w-full h-6 touch-none select-none" :data-id="item.id" />
+  <div class="draggable z-10 bg-white border-4 border-primary" :data-id="item.id" :style="style">
+    <div class="drag text-gray-300 bg-primary h-4 flex flex-row justify-around items-center">
+      <FiMoreHorizontal />
+      <FiMoreHorizontal />
+    </div>
     <slot />
   </div>
 </template>
 
 <style scoped>
-header.drag-zone {
-  background-color: var(--color-slate-500);
-}
+@reference "@/style.css";
+
 .draggable {
+  position: absolute;
   transform-origin: 0 0;
+  @apply touch-none select-none;
 }
 </style>
