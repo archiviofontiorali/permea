@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 
 import {
@@ -15,6 +15,7 @@ import interact from 'interactjs'
 import { BackgroundGrid as BG } from '@/constants'
 import CanvasNodeCard from './CanvasNodeCard.vue'
 import CanvasDraggable from './CanvasDraggable.vue'
+import CanvasEdge from './CanvasEdge.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
 
@@ -94,6 +95,10 @@ function zoomOut() {
         <circle cx="0" cy="0" r="7"></circle>
         <line x1="-40" x2="40" y1="0" y2="0" />
         <line x1="0" x2="0" y1="-40" y2="40" />
+      </g>
+
+      <g id="canvas-edges-wrapper" :style="translateView">
+        <CanvasEdge :key="edge.id" :edge="edge" v-for="edge in storage.edges" />
       </g>
     </svg>
 
