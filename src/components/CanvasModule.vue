@@ -39,6 +39,10 @@ interact('#canvas-background').draggable({
   },
 })
 
+const translateView = computed(() => ({
+  transform: `translate(${view.value.x}px, ${view.value.y}px)`,
+}))
+
 function resetView() {
   view.value.x = window.innerWidth / 2
   view.value.y = window.innerHeight / 2
@@ -86,11 +90,7 @@ function zoomOut() {
 
       <rect width="100%" height="100%" fill="url(#canvas-background-pattern)"></rect>
 
-      <g
-        id="canvas-axes"
-        :class="{ hidden: !view.showAxes }"
-        :style="{ transform: `translate(${view.x}px, ${view.y}px)` }"
-      >
+      <g id="canvas-axes" :class="{ hidden: !view.showAxes }" :style="translateView">
         <circle cx="0" cy="0" r="7"></circle>
         <line x1="-40" x2="40" y1="0" y2="0" />
         <line x1="0" x2="0" y1="-40" y2="40" />
