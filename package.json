@@ -19,9 +19,11 @@
   "dependencies": {
     "@interactjs/interactjs": "^1.10.27",
     "@tailwindcss/vite": "^4.1.12",
+    "@types/underscore": "^1.13.0",
     "interactjs": "^1.10.27",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.1.12",
+    "underscore": "^1.13.7",
     "vue": "^3.5.18",
     "vue-icons-plus": "^0.1.8",
     "vue-router": "^4.5.1"
