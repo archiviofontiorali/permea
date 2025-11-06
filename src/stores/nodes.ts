@@ -3,11 +3,12 @@ import { defineStore } from 'pinia'
 import { DemoConfig } from '@/constants'
 
 /** The canvasColor type is used to encode color data for nodes and edges. Colors attributes expect a string. Colors can be specified in hex format e.g. "#FF0000", or using one of the preset colors,  */
-type canvasColor = string
-type canvasSide = 'top' | 'right' | 'bottom' | 'left'
+export type canvasColor = string
+export type canvasSide = 'top' | 'right' | 'bottom' | 'left'
+export type canvasEnd = 'arrow' | 'none'
 
 // For specifics about implementation go to https://jsoncanvas.org/spec/1.0/
-export interface AbstractNode {
+export interface GenericNode {
   id: string
   type: 'text' | 'file' | 'link' | 'group'
   x: number
@@ -16,11 +17,12 @@ export interface AbstractNode {
   height: number
   color?: canvasColor
 }
-export interface TextNode extends AbstractNode {
+
+export interface TextNode extends GenericNode {
   type: 'text'
   text: string
 }
-export interface LinkNode extends AbstractNode {
+export interface LinkNode extends GenericNode {
   type: 'link'
   url: string
 }
@@ -36,12 +38,12 @@ export interface Edge {
   /** is the node id where the connection starts. */
   fromNode: string
   fromSide?: canvasSide
-  fromEnd?: 'none' | 'arrow' // default: none
+  fromEnd?: canvasEnd // default: none
 
   /** is the node id where the connection ends. */
   toNode: string
   toSide?: canvasSide
-  toEnd?: 'none' | 'arrow' // default: arrow
+  toEnd?: canvasEnd // default: arrow
 
   color?: canvasColor
   label?: string
@@ -50,13 +52,13 @@ export interface Edge {
 export const useCanvasStore = defineStore('canvas', {
   state: () => {
     return {
-      nodes: [] as AbstractNode[],
+      nodes: [] as Node[],
       edges: [] as Edge[],
     }
   },
   getters: {},
   actions: {
-    getNodeById(id: string) {
+    getNodeById(id: string): Node {
       const result = this.nodes.find((item) => item.id === id)
       if (result === undefined) throw Error()
       return result
