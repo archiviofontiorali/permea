@@ -13,7 +13,7 @@ import {
 import interact from 'interactjs'
 
 import { BackgroundGrid as BG } from '@/constants'
-import CanvasNodeCard from './CanvasNodeCard.vue'
+import CanvasNode from './CanvasNode.vue'
 import CanvasDraggable from './CanvasDraggable.vue'
 import CanvasEdge from './CanvasEdge.vue'
 
@@ -111,7 +111,7 @@ function zoomOut() {
         @move="storage.moveNodeRelative"
         v-for="node in storage.nodes"
       >
-        <CanvasNodeCard :node="node" />
+        <CanvasNode :node="node" />
       </CanvasDraggable>
     </section>
   </main>
