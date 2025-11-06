@@ -63,24 +63,10 @@ export const useCanvasStore = defineStore('canvas', {
       if (result === undefined) throw Error()
       return result
     },
-    getHead(edge: Edge) {
-      const head = this.getNodeById(edge.toNode)
-      let [dx, dy] = [0, 0]
-      if (edge.toSide == 'top') dy += head.height / 2
-      if (edge.toSide == 'bottom') dy -= head.height / 2
-      if (edge.toSide == 'right') dx += head.width / 2
-      if (edge.toSide == 'left') dx -= head.width / 2
-      return { x: head.x + dx, y: head.y + dy, end: edge.toEnd || 'arrow' }
-    },
-    getTail(edge: Edge) {
-      const tail = this.getNodeById(edge.fromNode)
-      let [dx, dy] = [0, 0]
-      if (edge.fromSide == 'top') dy += tail.height / 2
-      if (edge.fromSide == 'bottom') dy -= tail.height / 2
-      if (edge.fromSide == 'right') dx += tail.width / 2
-      if (edge.fromSide == 'left') dx -= tail.width / 2
-      return { x: tail.x + dx, y: tail.y + dy, end: edge.toEnd || 'none' }
-    },
+    top: (node: Node): number => node.y - node.height / 2,
+    bottom: (node: Node): number => node.y + node.height / 2,
+    left: (node: Node): number => node.x - node.width / 2,
+    right: (node: Node): number => node.x + node.width / 2,
     asMap() {
       this.nodes.reduce((acc, item) => ({ ...acc, [item.id]: item }), {})
     },
