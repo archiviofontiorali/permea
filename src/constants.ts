@@ -9,3 +9,9 @@ export const DemoConfig = {
   nodeWidth: 200,
   nodeHeight: 300,
 }
+
+export const canvas = {
+  edgeOffset: 20,
+  vertexRadius: 8,
+  vertexDropRadius: 16,
+}
