@@ -50,14 +50,34 @@ export interface Edge {
 export const useCanvasStore = defineStore('canvas', {
   state: () => {
     return {
-      nodes: [] as Node[],
+      nodes: [] as AbstractNode[],
       edges: [] as Edge[],
     }
   },
   getters: {},
   actions: {
     getNodeById(id: string) {
-      return this.nodes.find((item) => item.id === id)
+      const result = this.nodes.find((item) => item.id === id)
+      if (result === undefined) throw Error()
+      return result
+    },
+    getHead(edge: Edge) {
+      const head = this.getNodeById(edge.toNode)
+      let [dx, dy] = [0, 0]
+      if (edge.toSide == 'top') dy += head.height / 2
+      if (edge.toSide == 'bottom') dy -= head.height / 2
+      if (edge.toSide == 'right') dx += head.width / 2
+      if (edge.toSide == 'left') dx -= head.width / 2
+      return { x: head.x + dx, y: head.y + dy, end: edge.toEnd || 'arrow' }
+    },
+    getTail(edge: Edge) {
+      const tail = this.getNodeById(edge.fromNode)
+      let [dx, dy] = [0, 0]
+      if (edge.fromSide == 'top') dy += tail.height / 2
+      if (edge.fromSide == 'bottom') dy -= tail.height / 2
+      if (edge.fromSide == 'right') dx += tail.width / 2
+      if (edge.fromSide == 'left') dx -= tail.width / 2
+      return { x: tail.x + dx, y: tail.y + dy, end: edge.toEnd || 'none' }
     },
     asMap() {
       this.nodes.reduce((acc, item) => ({ ...acc, [item.id]: item }), {})
@@ -79,6 +99,8 @@ export const useCanvasStore = defineStore('canvas', {
             id: `edge-${nNodes + i}`,
             fromNode: (sample(this.nodes) || node).id,
             toNode: node.id,
+            fromSide: sample<canvasSide[]>(['top', 'bottom', 'left', 'right']),
+            toSide: sample<canvasSide[]>(['top', 'bottom', 'left', 'right']),
           })
         this.nodes.push(node)
       }

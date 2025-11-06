@@ -98,7 +98,12 @@ function zoomOut() {
       </g>
 
       <g id="canvas-edges-wrapper" :style="translateView">
-        <CanvasEdge :key="edge.id" :edge="edge" v-for="edge in storage.edges" />
+        <CanvasEdge
+          :key="edge.id"
+          :head="storage.getHead(edge)"
+          :tail="storage.getTail(edge)"
+          v-for="edge in storage.edges"
+        />
       </g>
     </svg>
 
