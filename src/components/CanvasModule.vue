@@ -18,6 +18,7 @@ import CanvasDraggable from './CanvasDraggable.vue'
 import CanvasEdge from './CanvasEdge.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
+import type {} from '@/stores/nodes'
 
 const storage = useCanvasStore()
 
@@ -102,7 +103,14 @@ function zoomOut() {
       </g>
 
       <g id="canvas-edges-wrapper" :style="scaleTraslateView">
-        <CanvasEdge :key="edge.id" :edge="edge" v-for="edge in storage.edges" />
+        <CanvasEdge
+          :key="edge.id"
+          :edge="edge"
+          @mouseover="console.log('mouseover')"
+          @mouseleave="console.log('mouseleave')"
+          v-for="edge in storage.edges"
+        />
+        <CanvasEdge class="active" :edge="movable.edge" v-if="movable.edge" />
       </g>
     </svg>
 

@@ -64,6 +64,8 @@ const path = computed(() => {
 
   return `${s} ${p} ${e}`
 })
+
+defineEmits(['mouseover', 'mouseleave'])
 </script>
 
 <template>
@@ -79,6 +81,8 @@ const path = computed(() => {
     :cx="vertex(head, edge.toSide).x"
     :cy="vertex(head, edge.toSide).y"
     :r="canvas.vertexRadius"
+    @mouseover="$emit('mouseover')"
+    @mouseleave="$emit('mouseleave')"
   />
 </template>
 
