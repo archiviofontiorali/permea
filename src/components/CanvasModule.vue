@@ -110,7 +110,7 @@ function zoomOut() {
           @mouseleave="console.log('mouseleave')"
           v-for="edge in storage.edges"
         />
-        <CanvasEdge class="active" :edge="movable.edge" v-if="movable.edge" />
+        <!-- <CanvasEdge class="active" :edge="movable.edge" v-if="movable.edge" /> -->
       </g>
     </svg>
 
