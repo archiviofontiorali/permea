@@ -44,6 +44,10 @@ const translateView = computed(() => ({
   transform: `translate(${view.value.x}px, ${view.value.y}px)`,
 }))
 
+const scaleTraslateView = computed(() => ({
+  transform: `translate(${view.value.x}px, ${view.value.y}px) scale(${view.value.scale})`,
+}))
+
 function resetView() {
   view.value.x = window.innerWidth / 2
   view.value.y = window.innerHeight / 2
@@ -97,7 +101,7 @@ function zoomOut() {
         <line x1="0" x2="0" y1="-40" y2="40" />
       </g>
 
-      <g id="canvas-edges-wrapper" :style="translateView">
+      <g id="canvas-edges-wrapper" :style="scaleTraslateView">
         <CanvasEdge :key="edge.id" :edge="edge" v-for="edge in storage.edges" />
       </g>
     </svg>
