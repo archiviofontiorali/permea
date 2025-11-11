@@ -4,9 +4,9 @@ import { computed } from 'vue'
 import interact from 'interactjs'
 import { FiMoreHorizontal } from 'vue-icons-plus/fi'
 
-import type { CanvasView } from './CanvasModule.vue'
+import type { View } from './BoardCanvas.vue'
 
-export interface Draggable {
+export interface Node {
   id: string
   x: number
   y: number
@@ -14,7 +14,7 @@ export interface Draggable {
   height: number
 }
 
-const { item, view } = defineProps<{ item: Draggable; view: CanvasView }>()
+const { item, view } = defineProps<{ item: Node; view: View }>()
 const style = computed(() => ({
   width: `${item.width}px`,
   height: `${item.height}px`,
@@ -32,7 +32,7 @@ const emit = defineEmits<{
 interact('.draggable > .drag').draggable({
   listeners: {
     move(event) {
-      const id = event.target.parentNode.dataset.id
+      const id = event.target.parentNode.id
       emit('move', id, event.dx / view.scale, event.dy / view.scale)
     },
   },
@@ -40,11 +40,11 @@ interact('.draggable > .drag').draggable({
 </script>
 
 <template>
-  <div class="draggable z-10 bg-white border-4 border-primary" :data-id="item.id" :style="style">
-    <div class="drag text-gray-300 bg-primary h-4 flex flex-row justify-around items-center">
+  <div :id="item.id" class="draggable z-10 bg-white border-4 border-primary" :style="style">
+    <header class="drag text-gray-300 bg-primary h-4 flex flex-row justify-around items-center">
       <FiMoreHorizontal />
       <FiMoreHorizontal />
-    </div>
+    </header>
     <slot />
   </div>
 </template>

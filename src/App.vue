@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Canvas from './components/CanvasModule.vue'
+import Board from '@/components/BoardCanvas.vue'
 </script>
 
 <template>
-  <Canvas class="w-full h-full" />
+  <Board class="w-full h-full" />
 </template>
 
 <style scoped>

@@ -5,7 +5,7 @@ import interact from 'interactjs'
 import { canvas } from '@/constants'
 import type { canvasSide, Edge } from '@/stores/nodes'
 import { useCanvasStore } from '@/stores/nodes'
-import type { CanvasView } from './CanvasModule.vue'
+import type { View } from './BoardCanvas.vue'
 
 export interface Extremity {
   x: number
@@ -19,7 +19,7 @@ export interface Move {
   on: 'from' | 'to' | 'head' | 'tail'
 }
 
-const { edge, view, move } = defineProps<{ edge: Edge; view: CanvasView; move?: Move }>()
+const { edge, view, move } = defineProps<{ edge: Edge; view: View; move?: Move }>()
 const storage = useCanvasStore()
 
 const tail = storage.getNodeById(edge.fromNode)

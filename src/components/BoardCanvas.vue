@@ -12,9 +12,12 @@ import {
 } from 'vue-icons-plus/fi'
 import interact from 'interactjs'
 
+import BoardDraggable from './BoardDraggable.vue'
+import type {} from './BoardDraggable.vue'
+
 import { BackgroundGrid as BG } from '@/constants'
-import CanvasNode from './CanvasNode.vue'
-import CanvasDraggable from './CanvasDraggable.vue'
+import BoardNode from './BoardNode.vue'
+
 import CanvasEdge from './CanvasEdge.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
@@ -22,14 +25,14 @@ import type {} from '@/stores/nodes'
 
 const storage = useCanvasStore()
 
-export interface CanvasView {
+export interface View {
   x: number
   y: number
   scale: number
   showAxes: boolean
 }
 
-const view: Ref<CanvasView> = ref({ x: 0, y: 0, scale: 1.0, showAxes: true })
+const view: Ref<View> = ref({ x: 0, y: 0, scale: 1.0, showAxes: true })
 resetView()
 
 interact('#canvas-background').draggable({
@@ -128,15 +131,15 @@ function onMovingEdge(id: string, x: number, y: number) {
 
     <!-- Canvas Card Nodes -->
     <section id="canvas-nodes-wrapper">
-      <CanvasDraggable
+      <BoardDraggable
+        :key="node.id"
         :item="node"
         :view="view"
-        :key="node.id"
         @move="storage.moveNodeRelative"
         v-for="node in storage.nodes"
       >
-        <CanvasNode :node="node" />
-      </CanvasDraggable>
+        <BoardNode :node="node" />
+      </BoardDraggable>
     </section>
   </main>
 </template>
