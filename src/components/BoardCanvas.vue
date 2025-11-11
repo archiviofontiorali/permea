@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 
 import {
@@ -18,7 +18,7 @@ import type {} from './BoardDraggable.vue'
 import { BackgroundGrid as BG } from '@/constants'
 import BoardNode from './BoardNode.vue'
 
-import CanvasEdge from './CanvasEdge.vue'
+import BoardEdge from './BoardEdge.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
 import type {} from '@/stores/nodes'
@@ -67,15 +67,15 @@ function zoomOut() {
   view.value.scale = Math.max(0.5, Math.min(view.value.scale / 2, 4.0))
 }
 
-const movingEdge: {
-  id?: string
-  move?: { x: number; y: number; on: 'from' }
-} = reactive({})
+// const movingEdge: {
+//   id?: string
+//   move?: { x: number; y: number; on: 'from' }
+// } = reactive({})
 
-function onMovingEdge(id: string, x: number, y: number) {
-  movingEdge.id = id
-  movingEdge.move = { x: x, y: y, on: 'from' }
-}
+// function onMovingEdge(id: string, x: number, y: number) {
+//   movingEdge.id = id
+//   movingEdge.move = { x: x, y: y, on: 'from' }
+// }
 </script>
 
 <template>
@@ -116,14 +116,11 @@ function onMovingEdge(id: string, x: number, y: number) {
       </g>
 
       <g id="canvas-edges-wrapper" :style="scaleTraslateView">
-        <CanvasEdge
+        <BoardEdge
           :key="edge.id"
           :edge="edge"
-          :view="view"
-          :move="edge.id === movingEdge.id ? movingEdge.move : undefined"
-          @move="onMovingEdge"
-          @remove="storage.removeEdge"
-          @update="storage.updateEdge"
+          :from="storage.getNodeById(edge.fromNode)"
+          :to="storage.getNodeById(edge.toNode)"
           v-for="edge in storage.edges"
         />
       </g>

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import interact from 'interactjs'
 
 import { canvas } from '@/constants'
-import type { canvasSide, Edge } from '@/stores/nodes'
+import type { canvasSide } from '@/stores/nodes'
 
 import type { Node } from './BoardDraggable.vue'
 
@@ -25,29 +25,6 @@ function sideY(node: Node, side?: canvasSide): number {
   if (side === 'bottom') return node.y + node.height / 2
   return node.y
 }
-const tail = computed(() => ({ x: sideX(from, e.fromSide), y: sideY(from, e.fromSide) }))
-const head = computed(() => ({ x: sideX(to, e.toSide), y: sideY(to, e.toSide) }))
-
-const middle = computed(() => {
-  let x = (head.value.x + tail.value.x) / 2
-  let y = (head.value.y + tail.value.y) / 2
-
-  if (e.fromSide === e.toSide) {
-    if (e.fromSide === 'top') y = Math.min(tail.value.y, head.value.y) - canvas.edgeOffset
-    if (e.fromSide === 'left') x = Math.min(tail.value.x, head.value.x) - canvas.edgeOffset
-    if (e.fromSide === 'right') x = Math.max(tail.value.x, head.value.x) + canvas.edgeOffset
-    if (e.fromSide === 'bottom') y = Math.max(tail.value.y, head.value.y) + canvas.edgeOffset
-  }
-
-  if (e.fromSide === 'right') x = Math.max(x, tail.value.x + canvas.edgeOffset)
-  if (e.toSide === 'right') x = Math.max(x, head.value.x + canvas.edgeOffset)
-
-  if (e.fromSide === 'left') x = Math.min(x, tail.value.x - canvas.edgeOffset)
-  if (e.toSide === 'left') x = Math.min(x, head.value.x - canvas.edgeOffset)
-
-  return { x: x, y: y }
-})
-
 function deltas(side?: canvasSide, offset: number = canvas.edgeOffset) {
   let [dx, dy] = [0, 0]
 
@@ -58,29 +35,48 @@ function deltas(side?: canvasSide, offset: number = canvas.edgeOffset) {
   return [dx, dy]
 }
 
-const fromPath = computed(() => {
-  // const [s, o] = [e.fromSide, canvas.edgeOffset]
-  const [tx, ty] = [tail.value.x, tail.value.y]
-  const [mx, my] = [middle.value.x, middle.value.y]
-  const [dx, dy] = deltas(e.fromSide)
+const tx = computed(() => sideX(from, e.fromSide))
+const ty = computed(() => sideY(from, e.fromSide))
 
-  return `M${tx} ${ty} h${dx} v${dy} H${mx} V${my}`
-})
-const toPath = computed(() => {
-  const [hx, hy] = [head.value.x, head.value.y]
-  const [mx, my] = [middle.value.x, middle.value.y]
-  const [dx, dy] = deltas(e.toSide)
+const hx = computed(() => sideX(to, e.toSide))
+const hy = computed(() => sideY(to, e.toSide))
 
-  return `M${hx} ${hy} h${dx} v${dy} H${mx} V${my}`
+const middle = computed(() => {
+  const [tdx, tdy] = deltas(e.fromSide)
+  const [hdx, hdy] = deltas(e.toSide)
+
+  let x = (tx.value + tdx + hx.value + hdx) / 2
+  let y = (ty.value + tdy + hy.value + hdy) / 2
+
+  if (e.fromSide === e.toSide) {
+    if (e.fromSide === 'top') y = Math.min(ty.value + tdy, hy.value + hdy)
+    if (e.fromSide === 'left') x = Math.min(tx.value + tdx, hx.value + hdx)
+    if (e.fromSide === 'right') x = Math.max(tx.value + tdx, hx.value + hdx)
+    if (e.fromSide === 'bottom') y = Math.max(ty.value + tdy, hy.value + hdy)
+  }
+
+  return { x: x, y: y }
 })
+
+function path(node: Node, target: { x: number; y: number }, side?: canvasSide): string {
+  const [x, y] = [sideX(node, side), sideY(node, side)]
+  const [dx, dy] = deltas(side)
+
+  let path = `M${x} ${y} v${dy} h${dx}`
+  if ((side === 'left' && middle.value.x > x) || (side === 'right' && middle.value.x < x)) {
+    const direction = node.y > target.y ? 1 : -1
+    path += `v${(node.height / 2 + canvas.edgeOffset) * direction}`
+  }
+  return `${path} H${target.x} V${target.y}`
+}
 </script>
 
 <template>
-  <circle class="edge-from" :cx="tail.x" :cy="tail.y" :r="canvas.vertexRadius" />
-  <path class="edge-from" :d="fromPath" />
+  <circle class="edge-from" :cx="tx" :cy="ty" :r="canvas.vertexRadius" />
+  <path class="edge-from" :d="path(from, middle, e.fromSide)" />
   <circle class="edge-middle" :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" />
-  <path class="edge-to" :d="toPath" />
-  <circle class="edge-to" :cx="head.x" :cy="head.y" :r="canvas.vertexRadius" />
+  <path class="edge-to" :d="path(to, middle, e.toSide)" />
+  <circle class="edge-to" :cx="hx" :cy="hy" :r="canvas.vertexRadius" />
 </template>
 
 <style scoped>
@@ -88,6 +84,12 @@ path {
   fill: none;
   stroke: var(--color-primary);
   stroke-width: 4;
+}
+path.edge-from {
+  stroke: red;
+}
+path.edge-to {
+  stroke: blue;
 }
 circle {
   fill: var(--color-primary);
