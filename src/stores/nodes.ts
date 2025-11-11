@@ -96,8 +96,8 @@ export const useCanvasStore = defineStore('canvas', {
             id: `edge-${nNodes + i}`,
             fromNode: (sample(this.nodes) || node).id,
             toNode: node.id,
-            fromSide: sample<canvasSide[]>(['top', 'bottom', 'left', 'right']),
-            toSide: sample<canvasSide[]>(['top', 'bottom', 'left', 'right']),
+            fromSide: sample<canvasSide[]>(DemoConfig.fromSideValues as canvasSide[]),
+            toSide: sample<canvasSide[]>(DemoConfig.toSideValues as canvasSide[]),
           })
         this.nodes.push(node)
       }

@@ -8,6 +8,8 @@ export const DemoConfig = {
   offset: 400,
   nodeWidth: 200,
   nodeHeight: 300,
+  fromSideValues: ['top', 'bottom', 'left', 'right'],
+  toSideValues: ['top', 'bottom', 'left', 'right'],
 }
 
 export const canvas = {
