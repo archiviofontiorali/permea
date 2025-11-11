@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import type { Ref } from 'vue'
 
 import {
@@ -63,6 +63,16 @@ function zoomIn() {
 function zoomOut() {
   view.value.scale = Math.max(0.5, Math.min(view.value.scale / 2, 4.0))
 }
+
+const movingEdge: {
+  id?: string
+  move?: { x: number; y: number; on: 'from' }
+} = reactive({})
+
+function onMovingEdge(id: string, x: number, y: number) {
+  movingEdge.id = id
+  movingEdge.move = { x: x, y: y, on: 'from' }
+}
 </script>
 
 <template>
@@ -106,11 +116,13 @@ function zoomOut() {
         <CanvasEdge
           :key="edge.id"
           :edge="edge"
-          @mouseover="console.log('mouseover')"
-          @mouseleave="console.log('mouseleave')"
+          :view="view"
+          :move="edge.id === movingEdge.id ? movingEdge.move : undefined"
+          @move="onMovingEdge"
+          @remove="storage.removeEdge"
+          @update="storage.updateEdge"
           v-for="edge in storage.edges"
         />
-        <!-- <CanvasEdge class="active" :edge="movable.edge" v-if="movable.edge" /> -->
       </g>
     </svg>
 
