@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import type { Ref } from 'vue'
 
 import {
@@ -13,7 +13,6 @@ import {
 import interact from 'interactjs'
 
 import BoardDraggable from './BoardDraggable.vue'
-import type {} from './BoardDraggable.vue'
 
 import { BackgroundGrid as BG } from '@/constants'
 import BoardNode from './BoardNode.vue'
@@ -67,15 +66,30 @@ function zoomOut() {
   view.value.scale = Math.max(0.5, Math.min(view.value.scale / 2, 4.0))
 }
 
-// const movingEdge: {
-//   id?: string
-//   move?: { x: number; y: number; on: 'from' }
-// } = reactive({})
+const target = reactive({
+  id: '',
+  from: { id: '', x: 0, y: 0, width: 0, height: 0 },
+  to: { id: '', x: 200, y: 0, width: 0, height: 0 },
+})
+const hide = computed(() => !target.id)
+function moveTarget(id: string, dx: number, dy: number, on: 'from' | 'to') {
+  console.log(target)
+  if (!id) return
+  if (!target.id) {
+    target.id = id
 
-// function onMovingEdge(id: string, x: number, y: number) {
-//   movingEdge.id = id
-//   movingEdge.move = { x: x, y: y, on: 'from' }
-// }
+    const edge = storage.getEdgeById(target.id)
+    const [from, to] = [storage.getNodeById(edge.fromNode), storage.getNodeById(edge.toNode)]
+
+    target.from = { ...from }
+    target.to = { ...to }
+  }
+
+  target[on].x += dx
+  target[on].y += dy
+}
+
+const edges = computed(() => storage.edges.filter((e) => e.id !== target.id))
 </script>
 
 <template>
@@ -121,8 +135,10 @@ function zoomOut() {
           :edge="edge"
           :from="storage.getNodeById(edge.fromNode)"
           :to="storage.getNodeById(edge.toNode)"
-          v-for="edge in storage.edges"
+          v-for="edge in edges"
         />
+
+        <BoardEdge :hide="!target.id" :edge="target" :from="target.from" :to="target.to" />
       </g>
     </svg>
 
@@ -167,5 +183,9 @@ svg g#canvas-axes circle {
 }
 .navbar button.debug {
   @apply text-purple-500 border-purple-500;
+}
+
+.hide {
+  opacity: 0;
 }
 </style>

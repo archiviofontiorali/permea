@@ -13,7 +13,12 @@ export interface Edge {
   toSide?: canvasSide
 }
 
-const { edge: e, from, to } = defineProps<{ edge: Edge; from: Node; to: Node }>()
+const {
+  edge: e,
+  from,
+  to,
+  hide,
+} = defineProps<{ edge: Edge; from: Node; to: Node; hide?: boolean }>()
 
 function sideX(node: Node, side?: canvasSide): number {
   if (side === 'left') return node.x - node.width / 2
@@ -69,14 +74,44 @@ function path(node: Node, target: { x: number; y: number }, side?: canvasSide): 
   }
   return `${path} H${target.x} V${target.y}`
 }
+
+const emit = defineEmits<{
+  (e: 'move', id: string, dx: number, dy: number, on: 'from' | 'to'): void
+}>()
+
+interact('path.edge-from, path.edge-to').draggable({
+  listeners: {
+    move(event) {
+      emit('move', event.target.dataset.edgeId, event.dx, event.dy, event.target.dataset.on)
+    },
+  },
+})
 </script>
 
 <template>
-  <circle class="edge-from" :cx="tx" :cy="ty" :r="canvas.vertexRadius" />
-  <path class="edge-from" :d="path(from, middle, e.fromSide)" />
-  <circle class="edge-middle" :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" />
-  <path class="edge-to" :d="path(to, middle, e.toSide)" />
-  <circle class="edge-to" :cx="hx" :cy="hy" :r="canvas.vertexRadius" />
+  <circle :class="{ hide: hide }" class="edge-from" :cx="tx" :cy="ty" :r="canvas.vertexRadius" />
+  <path
+    :class="{ hide: hide }"
+    class="edge-from"
+    :data-edge-id="edge.id"
+    data-on="from"
+    :d="path(from, middle, e.fromSide)"
+  />
+  <circle
+    :class="{ hide: hide }"
+    class="edge-middle"
+    :cx="middle.x"
+    :cy="middle.y"
+    :r="canvas.vertexRadius"
+  />
+  <path
+    :class="{ hide: hide }"
+    class="edge-to"
+    :data-edge-id="edge.id"
+    data-on="to"
+    :d="path(to, middle, e.toSide)"
+  />
+  <circle :class="{ hide: hide }" class="edge-to" :cx="hx" :cy="hy" :r="canvas.vertexRadius" />
 </template>
 
 <style scoped>
@@ -85,11 +120,8 @@ path {
   stroke: var(--color-primary);
   stroke-width: 4;
 }
-path.edge-from {
-  stroke: red;
-}
-path.edge-to {
-  stroke: blue;
+path:hover {
+  stroke-width: 10;
 }
 circle {
   fill: var(--color-primary);
@@ -97,5 +129,8 @@ circle {
 circle.edge-to {
   stroke: var(--color-white);
   stroke-width: 4;
+}
+.hide {
+  opacity: 0;
 }
 </style>
