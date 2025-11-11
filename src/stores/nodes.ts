@@ -63,6 +63,15 @@ export const useCanvasStore = defineStore('canvas', {
       if (result === undefined) throw Error()
       return result
     },
+    getEdgeById(id: string): Edge {
+      const result = this.edges.find((item) => item.id === id)
+      if (result === undefined) throw Error()
+      return result
+    },
+    removeEdge(id: string) {
+      const index = this.edges.findIndex((item) => item.id === id)
+      this.edges.splice(index, 1)
+    },
     top: (node: Node): number => node.y - node.height / 2,
     bottom: (node: Node): number => node.y + node.height / 2,
     left: (node: Node): number => node.x - node.width / 2,
@@ -105,6 +114,12 @@ export const useCanvasStore = defineStore('canvas', {
       if (node === undefined) throw Error()
       node.x += dx
       node.y += dy
+    },
+    updateEdge(id: string, patch: { fromNode?: string; toNode?: string }) {
+      const edge = this.getEdgeById(id)
+
+      if (patch.fromNode) edge.fromNode = patch.fromNode
+      if (patch.toNode) edge.toNode = patch.toNode
     },
   },
 })
