@@ -58,12 +58,12 @@ export const useCanvasStore = defineStore('canvas', {
   },
   getters: {},
   actions: {
-    getNodeById(id: string): Node {
+    getNode(id: string): Node {
       const result = this.nodes.find((item) => item.id === id)
       if (result === undefined) throw Error()
       return result
     },
-    getEdgeById(id: string): Edge {
+    getEdge(id: string) {
       const result = this.edges.find((item) => item.id === id)
       if (result === undefined) throw Error()
       return result
@@ -103,20 +103,20 @@ export const useCanvasStore = defineStore('canvas', {
       }
     },
     moveNode(id: string, x: number, y: number) {
-      const node = this.getNodeById(id)
+      const node = this.getNode(id)
       if (node === undefined) throw Error()
 
       node.x = x
       node.y = y
     },
     moveNodeRelative(id: string, dx: number = 0, dy: number = 0) {
-      const node = this.getNodeById(id)
+      const node = this.getNode(id)
       if (node === undefined) throw Error()
       node.x += dx
       node.y += dy
     },
     updateEdge(id: string, patch: { fromNode?: string; toNode?: string }) {
-      const edge = this.getEdgeById(id)
+      const edge = this.getEdge(id)
 
       if (patch.fromNode) edge.fromNode = patch.fromNode
       if (patch.toNode) edge.toNode = patch.toNode
