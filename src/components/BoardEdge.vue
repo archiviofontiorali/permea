@@ -1,117 +1,82 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import interact from 'interactjs'
-
 import { canvas } from '@/constants'
-import type { canvasSide } from '@/stores/nodes'
+import type { Cursor } from './BoardCanvas.vue'
+import type { Edge } from '@/stores/nodes'
+import { useCanvasStore } from '@/stores/nodes'
 
-import type { Node } from './BoardDraggable.vue'
-
-export interface Edge {
-  id: string
-  fromSide?: canvasSide
-  toSide?: canvasSide
+interface Point {
+  x: number
+  y: number
 }
 
-const {
-  edge: e,
-  from,
-  to,
-  hide,
-} = defineProps<{ edge: Edge; from: Node; to: Node; hide?: boolean }>()
+// import type { canvasSide } from '@/stores/nodes'
 
-function sideX(node: Node, side?: canvasSide): number {
-  if (side === 'left') return node.x - node.width / 2
-  if (side === 'right') return node.x + node.width / 2
-  return node.x
-}
-function sideY(node: Node, side?: canvasSide): number {
-  if (side === 'top') return node.y - node.height / 2
-  if (side === 'bottom') return node.y + node.height / 2
-  return node.y
-}
-function deltas(side?: canvasSide, offset: number = canvas.edgeOffset) {
-  let [dx, dy] = [0, 0]
+// function sideX(node: Node, side?: canvasSide): number {
+//   if (side === 'left') return node.x - node.width / 2
+//   if (side === 'right') return node.x + node.width / 2
+//   return node.x
+// }
+// function sideY(node: Node, side?: canvasSide): number {
+//   if (side === 'top') return node.y - node.height / 2
+//   if (side === 'bottom') return node.y + node.height / 2
+//   return node.y
+// }
+// function deltas(side?: canvasSide, offset: number = canvas.edgeOffset) {
+//   let [dx, dy] = [0, 0]
 
-  if (side === 'top') dy -= offset
-  if (side === 'left') dx -= offset
-  if (side === 'right') dx += offset
-  if (side === 'bottom') dy += offset
-  return [dx, dy]
-}
+//   if (side === 'top') dy -= offset
+//   if (side === 'left') dx -= offset
+//   if (side === 'right') dx += offset
+//   if (side === 'bottom') dy += offset
+//   return [dx, dy]
+// }
 
-const tx = computed(() => sideX(from, e.fromSide))
-const ty = computed(() => sideY(from, e.fromSide))
+const storage = useCanvasStore()
 
-const hx = computed(() => sideX(to, e.toSide))
-const hy = computed(() => sideY(to, e.toSide))
+const { edge, cursor } = defineProps<{ edge: Edge; cursor?: Cursor }>()
 
-const middle = computed(() => {
-  const [tdx, tdy] = deltas(e.fromSide)
-  const [hdx, hdy] = deltas(e.toSide)
-
-  let x = (tx.value + tdx + hx.value + hdx) / 2
-  let y = (ty.value + tdy + hy.value + hdy) / 2
-
-  if (e.fromSide === e.toSide) {
-    if (e.fromSide === 'top') y = Math.min(ty.value + tdy, hy.value + hdy)
-    if (e.fromSide === 'left') x = Math.min(tx.value + tdx, hx.value + hdx)
-    if (e.fromSide === 'right') x = Math.max(tx.value + tdx, hx.value + hdx)
-    if (e.fromSide === 'bottom') y = Math.max(ty.value + tdy, hy.value + hdy)
-  }
-
-  return { x: x, y: y }
+const tail = computed<Point>(() => {
+  if (cursor && cursor.on === 'tail') return { x: cursor.x, y: cursor.y }
+  const node = storage.getNode(edge.fromNode)
+  return { x: node.x, y: node.y }
+})
+const head = computed<Point>(() => {
+  if (cursor && cursor.on === 'head') return { x: cursor.x, y: cursor.y }
+  const node = storage.getNode(edge.toNode)
+  return { x: node.x, y: node.y }
 })
 
-function path(node: Node, target: { x: number; y: number }, side?: canvasSide): string {
-  const [x, y] = [sideX(node, side), sideY(node, side)]
-  const [dx, dy] = deltas(side)
+const middle = computed(() => ({
+  x: (head.value.x + tail.value.x) / 2,
+  y: (head.value.y + tail.value.y) / 2,
+}))
 
-  let path = `M${x} ${y} v${dy} h${dx}`
-  if ((side === 'left' && middle.value.x > x) || (side === 'right' && middle.value.x < x)) {
-    const direction = node.y > target.y ? 1 : -1
-    path += `v${(node.height / 2 + canvas.edgeOffset) * direction}`
-  }
-  return `${path} H${target.x} V${target.y}`
+function path(head: Point, tail: Point) {
+  return `M${tail.x} ${tail.y} L${head.x} ${head.y}`
 }
 
 const emit = defineEmits<{
-  (e: 'move', id: string, dx: number, dy: number, on: 'from' | 'to'): void
+  (e: 'drag', id: string, on: 'head' | 'tail'): void
 }>()
-
-interact('path.edge-from, path.edge-to').draggable({
-  listeners: {
-    move(event) {
-      emit('move', event.target.dataset.edgeId, event.dx, event.dy, event.target.dataset.on)
-    },
-  },
-})
 </script>
 
 <template>
-  <circle :class="{ hide: hide }" class="edge-from" :cx="tx" :cy="ty" :r="canvas.vertexRadius" />
   <path
-    :class="{ hide: hide }"
-    class="edge-from"
-    :data-edge-id="edge.id"
-    data-on="from"
-    :d="path(from, middle, e.fromSide)"
-  />
-  <circle
-    :class="{ hide: hide }"
-    class="edge-middle"
-    :cx="middle.x"
-    :cy="middle.y"
-    :r="canvas.vertexRadius"
+    ref="tail"
+    class="edge"
+    :d="path(tail, middle)"
+    @mousedown="emit('drag', edge.id, 'tail')"
   />
   <path
-    :class="{ hide: hide }"
-    class="edge-to"
-    :data-edge-id="edge.id"
-    data-on="to"
-    :d="path(to, middle, e.toSide)"
+    ref="head"
+    class="edge"
+    :d="path(head, middle)"
+    @mousedown="emit('drag', edge.id, 'head')"
   />
-  <circle :class="{ hide: hide }" class="edge-to" :cx="hx" :cy="hy" :r="canvas.vertexRadius" />
+  <circle class="edge-tail" :cx="tail.x" :cy="tail.y" :r="canvas.vertexRadius" />
+  <circle class="edge-middle" :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" />
+  <circle class="edge-head" :cx="head.x" :cy="head.y" :r="canvas.vertexRadius" />
 </template>
 
 <style scoped>
@@ -129,8 +94,5 @@ circle {
 circle.edge-to {
   stroke: var(--color-white);
   stroke-width: 4;
-}
-.hide {
-  opacity: 0;
 }
 </style>

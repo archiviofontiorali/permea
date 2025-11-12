@@ -137,18 +137,3 @@ interact('.draggable')
     :r="canvas.vertexRadius"
   />
 </template>
-
-<style scoped>
-path.edge {
-  fill: none;
-  stroke: var(--color-primary);
-  stroke-width: 4;
-}
-circle {
-  fill: var(--color-primary);
-}
-circle.edge-head {
-  stroke: var(--color-white);
-  stroke-width: 4;
-}
-</style>
