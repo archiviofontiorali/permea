@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
+import interact from 'interactjs'
 import type { Ref } from 'vue'
 
 import {
@@ -10,17 +11,14 @@ import {
   FiTarget,
   FiPlusCircle,
 } from 'vue-icons-plus/fi'
-import interact from 'interactjs'
 
 import BoardDraggable from './BoardDraggable.vue'
 
 import { BackgroundGrid as BG } from '@/constants'
 import BoardNode from './BoardNode.vue'
-
 import BoardEdge from './BoardEdge.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
-import type {} from '@/stores/nodes'
 
 const storage = useCanvasStore()
 
@@ -30,18 +28,24 @@ export interface View {
   scale: number
   showAxes: boolean
 }
+export interface Cursor {
+  id: string | null
+  on: 'head' | 'tail' | null
+  x: number
+  y: number
+}
 
 const view: Ref<View> = ref({ x: 0, y: 0, scale: 1.0, showAxes: true })
 resetView()
 
-interact('#canvas-background').draggable({
-  listeners: {
-    move: (event) => {
-      view.value.x += event.dx
-      view.value.y += event.dy
-    },
-  },
-})
+// interact('#canvas-background').draggable({
+//   listeners: {
+//     move: (event) => {
+//       view.value.x += event.dx
+//       view.value.y += event.dy
+//     },
+//   },
+// })
 
 const translateView = computed(() => ({
   transform: `translate(${view.value.x}px, ${view.value.y}px)`,
@@ -66,34 +70,35 @@ function zoomOut() {
   view.value.scale = Math.max(0.5, Math.min(view.value.scale / 2, 4.0))
 }
 
-const target = reactive({
-  id: '',
-  from: { id: '', x: 0, y: 0, width: 0, height: 0 },
-  to: { id: '', x: 200, y: 0, width: 0, height: 0 },
-})
-const hide = computed(() => !target.id)
-function moveTarget(id: string, dx: number, dy: number, on: 'from' | 'to') {
-  console.log(target)
-  if (!id) return
-  if (!target.id) {
-    target.id = id
+const cursor = reactive<Cursor>({ id: null, on: null, x: 0, y: 0 })
 
-    const edge = storage.getEdgeById(target.id)
-    const [from, to] = [storage.getNodeById(edge.fromNode), storage.getNodeById(edge.toNode)]
-
-    target.from = { ...from }
-    target.to = { ...to }
-  }
-
-  target[on].x += dx
-  target[on].y += dy
+function updateCursor(event: MouseEvent) {
+  cursor.x = event.clientX - view.value.x
+  cursor.y = event.clientY - view.value.y
 }
 
-const edges = computed(() => storage.edges.filter((e) => e.id !== target.id))
+function dragEdge(id: string, on: 'head' | 'tail') {
+  cursor.id = id
+  cursor.on = on
+}
+function dropEdge() {
+  cursor.id = null
+  cursor.on = null
+}
 </script>
 
 <template>
-  <main id="canvas-wrapper" class="absolute overflow-hidden">
+  <main
+    id="canvas-wrapper"
+    class="absolute overflow-hidden"
+    @mousemove="updateCursor"
+    @mouseup="dropEdge"
+  >
+    <header class="absolute w-full pa-2 z-20 bg-purple-500 flex justify-around font-mono">
+      <div>View: {{ view }}</div>
+      <div>Cursor: {{ cursor }}</div>
+    </header>
+
     <!-- Menu for canvas position and sizing -->
     <header class="absolute navbar navbar-bottom pb-2 z-20 gap-2 bottom-2 flex justify-center">
       <button @click="storage.demoSetup()" class="debug"><FiPlusCircle /></button>
@@ -133,12 +138,11 @@ const edges = computed(() => storage.edges.filter((e) => e.id !== target.id))
         <BoardEdge
           :key="edge.id"
           :edge="edge"
-          :from="storage.getNodeById(edge.fromNode)"
-          :to="storage.getNodeById(edge.toNode)"
-          v-for="edge in edges"
+          :view="view"
+          :cursor="cursor.id === edge.id ? cursor : undefined"
+          @drag="dragEdge"
+          v-for="edge in storage.edges"
         />
-
-        <BoardEdge :hide="!target.id" :edge="target" :from="target.from" :to="target.to" />
       </g>
     </svg>
 
