@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import interact from 'interactjs'
+
 import { canvas } from '@/constants'
-import type { Cursor } from './BoardCanvas.vue'
+import type { View, Cursor } from './BoardCanvas.vue'
 import type { Edge } from '@/stores/nodes'
 import { useCanvasStore } from '@/stores/nodes'
 
@@ -34,7 +36,7 @@ interface Point {
 
 const storage = useCanvasStore()
 
-const { edge, cursor } = defineProps<{ edge: Edge; cursor?: Cursor }>()
+const { edge, view, cursor } = defineProps<{ edge: Edge; view: View; cursor?: Cursor }>()
 
 const tail = computed<Point>(() => {
   if (cursor && cursor.on === 'tail') return { x: cursor.x, y: cursor.y }
@@ -57,23 +59,31 @@ function path(head: Point, tail: Point) {
 }
 
 const emit = defineEmits<{
-  (e: 'drag', id: string, on: 'head' | 'tail'): void
+  (e: 'move', id: string, on: 'head' | 'tail', x: number, y: number): void
+  (e: 'drop', id: string): void
 }>()
+
+interact('path.edge').draggable({
+  listeners: {
+    move(event) {
+      emit(
+        'move',
+        event.target.dataset.id,
+        event.target.dataset.on,
+        event.clientX - view.x,
+        event.clientY - view.y,
+      )
+    },
+    end(event) {
+      emit('drop', event.target.dataset.id)
+    },
+  },
+})
 </script>
 
 <template>
-  <path
-    ref="tail"
-    class="edge"
-    :d="path(tail, middle)"
-    @mousedown="emit('drag', edge.id, 'tail')"
-  />
-  <path
-    ref="head"
-    class="edge"
-    :d="path(head, middle)"
-    @mousedown="emit('drag', edge.id, 'head')"
-  />
+  <path class="edge" :data-id="edge.id" data-on="tail" :d="path(tail, middle)" />
+  <path class="edge" :data-id="edge.id" data-on="head" :d="path(head, middle)" />
   <circle class="edge-tail" :cx="tail.x" :cy="tail.y" :r="canvas.vertexRadius" />
   <circle class="edge-middle" :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" />
   <circle class="edge-head" :cx="head.x" :cy="head.y" :r="canvas.vertexRadius" />

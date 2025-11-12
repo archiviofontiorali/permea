@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
-import interact from 'interactjs'
 import type { Ref } from 'vue'
 
+import interact from 'interactjs'
 import {
   FiCrosshair,
   FiZoomIn,
@@ -36,16 +36,16 @@ export interface Cursor {
 }
 
 const view: Ref<View> = ref({ x: 0, y: 0, scale: 1.0, showAxes: true })
-resetView()
+resetView() // Execute on creation to center canvas
 
-// interact('#canvas-background').draggable({
-//   listeners: {
-//     move: (event) => {
-//       view.value.x += event.dx
-//       view.value.y += event.dy
-//     },
-//   },
-// })
+interact('#canvas-background').draggable({
+  listeners: {
+    move: (event) => {
+      view.value.x += event.dx
+      view.value.y += event.dy
+    },
+  },
+})
 
 const translateView = computed(() => ({
   transform: `translate(${view.value.x}px, ${view.value.y}px)`,
@@ -72,14 +72,11 @@ function zoomOut() {
 
 const cursor = reactive<Cursor>({ id: null, on: null, x: 0, y: 0 })
 
-function updateCursor(event: MouseEvent) {
-  cursor.x = event.clientX - view.value.x
-  cursor.y = event.clientY - view.value.y
-}
-
-function dragEdge(id: string, on: 'head' | 'tail') {
+function moveEdge(id: string, on: 'head' | 'tail', x: number, y: number) {
   cursor.id = id
   cursor.on = on
+  cursor.x = x
+  cursor.y = y
 }
 function dropEdge() {
   cursor.id = null
@@ -88,12 +85,7 @@ function dropEdge() {
 </script>
 
 <template>
-  <main
-    id="canvas-wrapper"
-    class="absolute overflow-hidden"
-    @mousemove="updateCursor"
-    @mouseup="dropEdge"
-  >
+  <main id="canvas-wrapper" class="absolute overflow-hidden">
     <header class="absolute w-full pa-2 z-20 bg-purple-500 flex justify-around font-mono">
       <div>View: {{ view }}</div>
       <div>Cursor: {{ cursor }}</div>
@@ -140,7 +132,8 @@ function dropEdge() {
           :edge="edge"
           :view="view"
           :cursor="cursor.id === edge.id ? cursor : undefined"
-          @drag="dragEdge"
+          @move="moveEdge"
+          @drop="dropEdge"
           v-for="edge in storage.edges"
         />
       </g>
