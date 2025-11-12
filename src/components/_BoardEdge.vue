@@ -15,7 +15,15 @@ export interface Node {
   width: number
   height: number
 }
+function deltas(side?: canvasSide, offset: number = canvas.edgeOffset) {
+  let [dx, dy] = [0, 0]
 
+  if (side === 'top') dy -= offset
+  if (side === 'left') dx -= offset
+  if (side === 'right') dx += offset
+  if (side === 'bottom') dy += offset
+  return [dx, dy]
+}
 const { edge, from, to } = defineProps<{ edge: Edge; from: Node; to: Node }>()
 
 const tx = computed(() => sideX(from, edge.fromSide))

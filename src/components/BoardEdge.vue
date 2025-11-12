@@ -14,25 +14,14 @@ interface Point {
 
 // import type { canvasSide } from '@/stores/nodes'
 
-// function sideX(node: Node, side?: canvasSide): number {
-//   if (side === 'left') return node.x - node.width / 2
-//   if (side === 'right') return node.x + node.width / 2
-//   return node.x
-// }
-// function sideY(node: Node, side?: canvasSide): number {
-//   if (side === 'top') return node.y - node.height / 2
-//   if (side === 'bottom') return node.y + node.height / 2
-//   return node.y
-// }
-// function deltas(side?: canvasSide, offset: number = canvas.edgeOffset) {
-//   let [dx, dy] = [0, 0]
-
-//   if (side === 'top') dy -= offset
-//   if (side === 'left') dx -= offset
-//   if (side === 'right') dx += offset
-//   if (side === 'bottom') dy += offset
-//   return [dx, dy]
-// }
+function sideOffset(node: { width: number; height: number }, side?: canvasSide) {
+  let [sx, sy] = [0, 0]
+  if (side === 'top') sy -= node.height / 2
+  if (side === 'left') sx -= node.width / 2
+  if (side === 'right') sx += node.width / 2
+  if (side === 'bottom') sy += node.height / 2
+  return { dx: sx, dy: sy }
+}
 
 const storage = useCanvasStore()
 
@@ -41,12 +30,14 @@ const { edge, view, cursor } = defineProps<{ edge: Edge; view: View; cursor?: Cu
 const tail = computed<Point>(() => {
   if (cursor && cursor.on === 'tail') return { x: cursor.x, y: cursor.y }
   const node = storage.getNode(edge.fromNode)
-  return { x: node.x, y: node.y }
+  const { dx, dy } = sideOffset(node, edge.fromSide)
+  return { x: node.x + dx, y: node.y + dy }
 })
 const head = computed<Point>(() => {
   if (cursor && cursor.on === 'head') return { x: cursor.x, y: cursor.y }
   const node = storage.getNode(edge.toNode)
-  return { x: node.x, y: node.y }
+  const { dx, dy } = sideOffset(node, edge.fromSide)
+  return { x: node.x + dx, y: node.y + dy }
 })
 
 const middle = computed(() => ({
