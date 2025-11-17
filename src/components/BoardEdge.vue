@@ -12,7 +12,7 @@ interface Point {
   y: number
 }
 
-// import type { canvasSide } from '@/stores/nodes'
+import type { canvasSide } from '@/stores/nodes'
 
 function sideOffset(node: { width: number; height: number }, side?: canvasSide) {
   let [sx, sy] = [0, 0]
