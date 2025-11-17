@@ -5,10 +5,10 @@ const { node } = defineProps<{ node: Node }>()
 </script>
 
 <template>
-  <article class="card flex flex-col justify-between align-middle text-center">
+  <main class="flex flex-col justify-between align-middle text-center">
     {{ node.type }} -- {{ node.id }}<br />
     ({{ node.x.toFixed(2) }}, {{ node.y.toFixed(2) }})
-  </article>
+  </main>
 </template>
 
 <style scoped></style>

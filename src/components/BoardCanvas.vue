@@ -12,10 +12,9 @@ import {
   FiPlusCircle,
 } from 'vue-icons-plus/fi'
 
-import BoardDraggable from './BoardDraggable.vue'
-
 import { BackgroundGrid as BG } from '@/constants'
-import BoardNode from './BoardNode.vue'
+
+import NodeContainer from './NodeContainer.vue'
 import BoardEdge from './BoardEdge.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
@@ -141,15 +140,7 @@ function dropEdge() {
 
     <!-- Canvas Card Nodes -->
     <section id="canvas-nodes-wrapper">
-      <BoardDraggable
-        :key="node.id"
-        :item="node"
-        :view="view"
-        @move="storage.moveNodeRelative"
-        v-for="node in storage.nodes"
-      >
-        <BoardNode :node="node" />
-      </BoardDraggable>
+      <NodeContainer :nodes="storage.nodes" :view="view" @move="storage.moveNodeRelative" />
     </section>
   </main>
 </template>
