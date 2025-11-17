@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 
 import interact from 'interactjs'
@@ -15,7 +15,7 @@ import {
 import { BackgroundGrid as BG } from '@/constants'
 
 import NodeContainer from './NodeContainer.vue'
-import BoardEdge from './BoardEdge.vue'
+import EdgeContainer from './EdgeContainer.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
 
@@ -26,12 +26,6 @@ export interface View {
   y: number
   scale: number
   showAxes: boolean
-}
-export interface Cursor {
-  id: string | null
-  on: 'head' | 'tail' | null
-  x: number
-  y: number
 }
 
 const view: Ref<View> = ref({ x: 0, y: 0, scale: 1.0, showAxes: true })
@@ -68,26 +62,13 @@ function zoomIn() {
 function zoomOut() {
   view.value.scale = Math.max(0.5, Math.min(view.value.scale / 2, 4.0))
 }
-
-const cursor = reactive<Cursor>({ id: null, on: null, x: 0, y: 0 })
-
-function moveEdge(id: string, on: 'head' | 'tail', x: number, y: number) {
-  cursor.id = id
-  cursor.on = on
-  cursor.x = x
-  cursor.y = y
-}
-function dropEdge() {
-  cursor.id = null
-  cursor.on = null
-}
 </script>
 
 <template>
   <main id="canvas-wrapper" class="absolute overflow-hidden">
     <header class="absolute w-full pa-2 z-20 bg-purple-500 flex justify-around font-mono">
       <div>View: {{ view }}</div>
-      <div>Cursor: {{ cursor }}</div>
+      <!-- <div>Cursor: {{ cursor }}</div> -->
     </header>
 
     <!-- Menu for canvas position and sizing -->
@@ -126,15 +107,7 @@ function dropEdge() {
       </g>
 
       <g id="canvas-edges-wrapper" :style="scaleTraslateView">
-        <BoardEdge
-          :key="edge.id"
-          :edge="edge"
-          :view="view"
-          :cursor="cursor.id === edge.id ? cursor : undefined"
-          @move="moveEdge"
-          @drop="dropEdge"
-          v-for="edge in storage.edges"
-        />
+        <EdgeContainer :edges="storage.edges" :view="view" />
       </g>
     </svg>
 
@@ -171,9 +144,5 @@ svg g#canvas-axes circle {
 }
 .navbar button.debug {
   @apply text-purple-500 border-purple-500;
-}
-
-.hide {
-  opacity: 0;
 }
 </style>

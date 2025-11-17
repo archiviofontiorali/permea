@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import interact from 'interactjs'
 
 import { canvas } from '@/constants'
-import type { View, Cursor } from './BoardCanvas.vue'
-import type { Edge } from '@/stores/nodes'
-import { useCanvasStore } from '@/stores/nodes'
+import type { Edge, canvasSide } from '@/stores/nodes'
+import type { Target } from './EdgeContainer.vue'
 
 interface Point {
   x: number
   y: number
 }
 
-import type { canvasSide } from '@/stores/nodes'
+const { edge, from, to } = defineProps<{ edge: Edge; from: Target; to: Target }>()
 
 function sideOffset(node: { width: number; height: number }, side?: canvasSide) {
   let [sx, sy] = [0, 0]
@@ -23,24 +21,16 @@ function sideOffset(node: { width: number; height: number }, side?: canvasSide) 
   return { dx: sx, dy: sy }
 }
 
-const storage = useCanvasStore()
-
-const { edge, view, cursor } = defineProps<{ edge: Edge; view: View; cursor?: Cursor }>()
-
 const tail = computed<Point>(() => {
-  if (cursor && cursor.on === 'tail') return { x: cursor.x, y: cursor.y }
-  const node = storage.getNode(edge.fromNode)
-  const { dx, dy } = sideOffset(node, edge.fromSide)
-  return { x: node.x + dx, y: node.y + dy }
+  const { dx, dy } = sideOffset(from, edge.fromSide)
+  return { x: from.x + dx, y: from.y + dy }
 })
 const head = computed<Point>(() => {
-  if (cursor && cursor.on === 'head') return { x: cursor.x, y: cursor.y }
-  const node = storage.getNode(edge.toNode)
-  const { dx, dy } = sideOffset(node, edge.fromSide)
-  return { x: node.x + dx, y: node.y + dy }
+  const { dx, dy } = sideOffset(to, edge.toSide)
+  return { x: to.x + dx, y: to.y + dy }
 })
 
-const middle = computed(() => ({
+const middle = computed<Point>(() => ({
   x: (head.value.x + tail.value.x) / 2,
   y: (head.value.y + tail.value.y) / 2,
 }))
@@ -48,28 +38,6 @@ const middle = computed(() => ({
 function path(head: Point, tail: Point) {
   return `M${tail.x} ${tail.y} L${head.x} ${head.y}`
 }
-
-const emit = defineEmits<{
-  (e: 'move', id: string, on: 'head' | 'tail', x: number, y: number): void
-  (e: 'drop', id: string): void
-}>()
-
-interact('path.edge').draggable({
-  listeners: {
-    move(event) {
-      emit(
-        'move',
-        event.target.dataset.id,
-        event.target.dataset.on,
-        event.clientX - view.x,
-        event.clientY - view.y,
-      )
-    },
-    end(event) {
-      emit('drop', event.target.dataset.id)
-    },
-  },
-})
 </script>
 
 <template>
