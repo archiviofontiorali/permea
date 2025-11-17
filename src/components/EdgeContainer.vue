@@ -27,8 +27,8 @@ export interface Cursor {
 const cursor = reactive<Cursor>({ id: null, on: null, point: { x: 0, y: 0, width: 0, height: 0 } })
 
 // const emit = defineEmits<{
-//   (e: 'move', id: string, on: 'head' | 'tail', x: number, y: number): void
-//   (e: 'drop', id: string): void
+//   // Drop edge side over a new node side (need dropzones)
+//   (e: 'drop', id: string, on: 'head' | 'tail', side: canvasSide, node: string): void
 // }>()
 
 interact('path.edge').draggable({
@@ -36,8 +36,8 @@ interact('path.edge').draggable({
     move(event) {
       cursor.id = event.target.dataset.id
       cursor.on = event.target.dataset.on
-      cursor.point.x = event.clientX - view.x
-      cursor.point.y = event.clientY - view.y
+      cursor.point.x = (event.clientX - view.x) / view.scale
+      cursor.point.y = (event.clientY - view.y) / view.scale
     },
     end() {
       cursor.id = null
