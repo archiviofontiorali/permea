@@ -75,6 +75,13 @@ interact('article.card > .handle')
     storage.updateEdge(edge, patch)
   })
 
+interact(':not(article.card > .handle)')
+  .dropzone({ accept: '.edge' })
+  .on('drop', (event) => {
+    const edge = event.relatedTarget.dataset.edgeId
+    storage.deleteEdge(edge)
+  })
+
 function fromNode(edge: Edge) {
   if (cursor.id === edge.id && cursor.on === 'tail') return cursor.point
   return storage.getNode(edge.fromNode)
