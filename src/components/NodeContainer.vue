@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import interact from 'interactjs'
 import { FiMoreHorizontal } from 'vue-icons-plus/fi'
 
-import type { View } from './BoardCanvas.vue'
-import NodeCard from './NodeCard.vue'
-
+import { useCanvasStore } from '@/stores/nodes'
 import type { Node } from '@/stores/nodes'
 
-const { nodes, view } = defineProps<{ nodes: Node[]; view: View }>()
+import type { View } from './BoardCanvas.vue'
+import NodeCard from './NodeCard.vue'
+import { getCurrentInstance } from 'vue'
+
+const storage = useCanvasStore()
+const { nodes, view } = defineProps<{ nodes?: Node[]; view: View }>()
 
 const emit = defineEmits<{
   (e: 'move', id: string, dx: number, dy: number): void
@@ -25,12 +29,16 @@ function style(node: Node) {
     `,
   }
 }
+const nodesDefault = computed(() => (nodes === undefined ? storage.nodes : nodes))
+const hasMoveEventListener = computed(() => !!getCurrentInstance()?.vnode.props?.onMove)
 
 interact('article.card > header.draggable').draggable({
   listeners: {
     move(event) {
       const id = event.target.parentNode.id
-      emit('move', id, event.dx / view.scale, event.dy / view.scale)
+      const [dx, dy] = [event.dx / view.scale, event.dy / view.scale]
+      if (!hasMoveEventListener.value) storage.moveNodeRelative(id, dx, dy)
+      else emit('move', id, dx, dy)
     },
   },
 })
@@ -42,7 +50,7 @@ interact('article.card > header.draggable').draggable({
     :key="node.id"
     class="card border-4"
     :style="style(node)"
-    v-for="node in nodes"
+    v-for="node in nodesDefault"
   >
     <header class="draggable flex flex-row justify-around align-middle">
       <FiMoreHorizontal />

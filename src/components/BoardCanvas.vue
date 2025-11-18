@@ -113,7 +113,7 @@ function zoomOut() {
 
     <!-- Canvas Card Nodes -->
     <section id="canvas-nodes-wrapper">
-      <NodeContainer :nodes="storage.nodes" :view="view" @move="storage.moveNodeRelative" />
+      <NodeContainer :view="view" />
     </section>
   </main>
 </template>
