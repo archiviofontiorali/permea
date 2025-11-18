@@ -35,7 +35,7 @@ const hasMoveEventListener = computed(() => !!getCurrentInstance()?.vnode.props?
 interact('article.card > header.draggable').draggable({
   listeners: {
     move(event) {
-      const id = event.target.parentNode.id
+      const id = event.target.parentNode.dataset.nodeId
       const [dx, dy] = [event.dx / view.scale, event.dy / view.scale]
       if (!hasMoveEventListener.value) storage.moveNodeRelative(id, dx, dy)
       else emit('move', id, dx, dy)
@@ -46,7 +46,7 @@ interact('article.card > header.draggable').draggable({
 
 <template>
   <article
-    :id="node.id"
+    :data-node-id="node.id"
     :key="node.id"
     class="card border-4"
     :style="style(node)"

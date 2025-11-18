@@ -41,8 +41,8 @@ function path(head: Point, tail: Point) {
 </script>
 
 <template>
-  <path class="edge" :data-id="edge.id" data-on="tail" :d="path(tail, middle)" />
-  <path class="edge" :data-id="edge.id" data-on="head" :d="path(head, middle)" />
+  <path class="edge" :data-edge-id="edge.id" data-on="tail" :d="path(tail, middle)" />
+  <path class="edge" :data-edge-id="edge.id" data-on="head" :d="path(head, middle)" />
   <circle class="edge-tail" :cx="tail.x" :cy="tail.y" :r="canvas.vertexRadius" />
   <circle class="edge-middle" :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" />
   <circle class="edge-head" :cx="head.x" :cy="head.y" :r="canvas.vertexRadius" />

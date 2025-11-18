@@ -34,7 +34,7 @@ const cursor = reactive<Cursor>({ id: null, on: null, point: { x: 0, y: 0, width
 interact('path.edge').draggable({
   listeners: {
     move(event) {
-      cursor.id = event.target.dataset.id
+      cursor.id = event.target.dataset.edgeId
       cursor.on = event.target.dataset.on
       cursor.point.x = (event.clientX - view.x) / view.scale
       cursor.point.y = (event.clientY - view.y) / view.scale
