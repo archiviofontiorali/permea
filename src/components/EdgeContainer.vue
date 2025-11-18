@@ -26,6 +26,8 @@ export interface Cursor {
 }
 const cursor = reactive<Cursor>({ id: null, on: null, point: { x: 0, y: 0, width: 0, height: 0 } })
 
+const edgesDefault = computed(() => (edges === undefined ? storage.edges : edges))
+
 // const emit = defineEmits<{
 //   // Drop edge side over a new node side (need dropzones)
 //   (e: 'drop', id: string, on: 'head' | 'tail', side: canvasSide, node: string): void
@@ -62,6 +64,6 @@ function toNode(edge: Edge) {
     :edge="edge"
     :from="fromNode(edge)"
     :to="toNode(edge)"
-    v-for="edge in edges"
+    v-for="edge in edgesDefault"
   />
 </template>

@@ -107,7 +107,7 @@ function zoomOut() {
       </g>
 
       <g id="canvas-edges-wrapper" :style="scaleTraslateView">
-        <EdgeContainer :edges="storage.edges" :view="view" />
+        <EdgeContainer :view="view" />
       </g>
     </svg>
 
