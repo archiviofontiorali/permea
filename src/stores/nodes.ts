@@ -3,9 +3,9 @@ import { defineStore } from 'pinia'
 import { DemoConfig } from '@/constants'
 
 /** The canvasColor type is used to encode color data for nodes and edges. Colors attributes expect a string. Colors can be specified in hex format e.g. "#FF0000", or using one of the preset colors,  */
-export type canvasColor = string
-export type canvasSide = 'top' | 'right' | 'bottom' | 'left'
-export type canvasEnd = 'arrow' | 'none'
+export type Color = string
+export type Side = 'top' | 'right' | 'bottom' | 'left'
+export type End = 'arrow' | 'none'
 
 // For specifics about implementation go to https://jsoncanvas.org/spec/1.0/
 export interface GenericNode {
@@ -15,7 +15,7 @@ export interface GenericNode {
   y: number
   width: number
   height: number
-  color?: canvasColor
+  color?: Color
 }
 
 export interface TextNode extends GenericNode {
@@ -37,23 +37,23 @@ export interface Edge {
 
   /** is the node id where the connection starts. */
   fromNode: string
-  fromSide?: canvasSide
-  fromEnd?: canvasEnd // default: none
+  fromSide?: Side
+  fromEnd?: End // default: none
 
   /** is the node id where the connection ends. */
   toNode: string
-  toSide?: canvasSide
-  toEnd?: canvasEnd // default: arrow
+  toSide?: Side
+  toEnd?: End // default: arrow
 
-  color?: canvasColor
+  color?: Color
   label?: string
 }
 export interface EdgePatch {
   fromNode?: string
-  fromSide?: canvasSide
+  fromSide?: Side
 
   toNode?: string
-  toSide?: canvasSide
+  toSide?: Side
 }
 
 export const useCanvasStore = defineStore('canvas', {
@@ -103,8 +103,8 @@ export const useCanvasStore = defineStore('canvas', {
             id: `edge-${nNodes + i}`,
             fromNode: (sample(this.nodes) || node).id,
             toNode: node.id,
-            fromSide: sample<canvasSide[]>(DemoConfig.fromSideValues as canvasSide[]),
-            toSide: sample<canvasSide[]>(DemoConfig.toSideValues as canvasSide[]),
+            fromSide: sample<Side[]>(DemoConfig.fromSideValues as Side[]),
+            toSide: sample<Side[]>(DemoConfig.toSideValues as Side[]),
           })
         this.nodes.push(node)
       }

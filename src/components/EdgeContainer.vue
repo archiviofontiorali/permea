@@ -2,7 +2,7 @@
 import interact from 'interactjs'
 import { getCurrentInstance, reactive, computed } from 'vue'
 
-import type { Edge, EdgePatch, canvasSide } from '@/stores/nodes'
+import type { Edge, EdgePatch, Side } from '@/stores/nodes'
 import { useCanvasStore } from '@/stores/nodes'
 
 import type { View } from './BoardCanvas.vue'
@@ -29,7 +29,7 @@ const cursor = reactive<Cursor>({ id: null, on: null, point: { x: 0, y: 0, width
 const edgesDefault = computed(() => (edges === undefined ? storage.edges : edges))
 
 const emit = defineEmits<{
-  (e: 'drop', id: string, on: 'head' | 'tail', side: canvasSide, node: string | null): void
+  (e: 'drop', id: string, on: 'head' | 'tail', side: Side, node: string | null): void
 }>()
 const hasDropEventListener = computed(() => !!getCurrentInstance()?.vnode.props?.onDrop)
 
@@ -61,7 +61,7 @@ interact('article.card > .handle')
     const dy = event.relatedTarget.dataset.y - node.y
     const [w, h] = [node.width, node.height]
 
-    let side: canvasSide = dx > 0 ? 'right' : 'left'
+    let side: Side = dx > 0 ? 'right' : 'left'
     if (dy < Math.min((h / w) * dx, (-h / w) * dx)) side = 'top'
     if (dy > Math.max((h / w) * dx, (-h / w) * dx)) side = 'bottom'
 

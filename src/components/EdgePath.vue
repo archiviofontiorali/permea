@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 import { canvas } from '@/constants'
-import type { Edge, canvasSide } from '@/stores/nodes'
+import type { Edge, Side } from '@/stores/nodes'
 import type { Target } from './EdgeContainer.vue'
 
 interface Point {
@@ -12,7 +12,7 @@ interface Point {
 
 const { edge, from, to } = defineProps<{ edge: Edge; from: Target; to: Target }>()
 
-function sideOffset(node: { width: number; height: number }, side?: canvasSide) {
+function sideOffset(node: { width: number; height: number }, side?: Side) {
   let [sx, sy] = [0, 0]
   if (side === 'top') sy -= node.height / 2
   if (side === 'left') sx -= node.width / 2

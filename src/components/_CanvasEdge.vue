@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import interact from 'interactjs'
 
 import { canvas } from '@/constants'
-import type { canvasSide, Edge } from '@/stores/nodes'
+import type { Side, Edge } from '@/stores/nodes'
 import { useCanvasStore } from '@/stores/nodes'
 import type { View } from './BoardCanvas.vue'
 
@@ -22,12 +22,12 @@ export interface Move {
 const { edge, view, move } = defineProps<{ edge: Edge; view: View; move?: Move }>()
 const storage = useCanvasStore()
 
-const tail = storage.getNodeById(edge.fromNode)
-const head = storage.getNodeById(edge.toNode)
+const tail = storage.getNode(edge.fromNode)
+const head = storage.getNode(edge.toNode)
 
 const [ox, oy] = [canvas.edgeOffset, canvas.edgeOffset]
 
-function vertex(node: Extremity, side?: canvasSide) {
+function vertex(node: Extremity, side?: Side) {
   let [dx, dy] = [0, 0]
   if (side === 'top') dy -= node.height / 2
   if (side === 'left') dx -= node.width / 2
@@ -37,8 +37,8 @@ function vertex(node: Extremity, side?: canvasSide) {
 }
 
 const path = computed(() => {
-  const tail = storage.getNodeById(edge.fromNode)
-  const head = storage.getNodeById(edge.toNode)
+  const tail = storage.getNode(edge.fromNode)
+  const head = storage.getNode(edge.toNode)
 
   const { x: tx, y: ty } =
     move && ['tail', 'from'].includes(move.on) ? move : vertex(tail, edge.fromSide)

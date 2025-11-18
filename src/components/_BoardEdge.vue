@@ -2,12 +2,12 @@
 import { computed } from 'vue'
 
 import { canvas } from '@/constants'
-import type { canvasSide } from '@/stores/nodes'
+import type { Side } from '@/stores/nodes'
 
 export interface Edge {
   id: string
-  fromSide?: canvasSide
-  toSide?: canvasSide
+  fromSide?: Side
+  toSide?: Side
 }
 export interface Node {
   x: number
@@ -15,7 +15,7 @@ export interface Node {
   width: number
   height: number
 }
-function deltas(side?: canvasSide, offset: number = canvas.edgeOffset) {
+function deltas(side?: Side, offset: number = canvas.edgeOffset) {
   let [dx, dy] = [0, 0]
 
   if (side === 'top') dy -= offset
@@ -49,7 +49,7 @@ const middle = computed(() => {
   return { x: x, y: y }
 })
 
-function path(node: Node, target: { x: number; y: number }, side?: canvasSide): string {
+function path(node: Node, target: { x: number; y: number }, side?: Side): string {
   const [x, y] = [sideX(node, side), sideY(node, side)]
   const [dx, dy] = deltas(side)
 
