@@ -40,6 +40,9 @@ interact('.edge').draggable({
       cursor.on = event.target.dataset.on
       cursor.point.x = (event.clientX - view.x) / view.scale
       cursor.point.y = (event.clientY - view.y) / view.scale
+
+      event.target.dataset.x = event.clientX - view.x
+      event.target.dataset.y = event.clientY - view.y
     },
     end() {
       cursor.id = null
@@ -50,17 +53,23 @@ interact('.edge').draggable({
 interact('article.card')
   .dropzone({ accept: '.edge' })
   .on('drop', (event) => {
-    console.debug(event, event.dx)
-    const node = event.target.dataset.nodeId
+    const node = storage.getNode(event.target.dataset.nodeId)
     const edge = event.relatedTarget.dataset.edgeId
     const on = event.relatedTarget.dataset.on
-    const side = 'top'
 
-    if (hasDropEventListener.value) return emit('drop', edge, on, side, node)
+    const dx = event.relatedTarget.dataset.x - node.x
+    const dy = event.relatedTarget.dataset.y - node.y
+    const [w, h] = [node.width, node.height]
+
+    let side: canvasSide = dx > 0 ? 'right' : 'left'
+    if (dy < Math.min((h / w) * dx, (-h / w) * dx)) side = 'top'
+    if (dy > Math.max((h / w) * dx, (-h / w) * dx)) side = 'bottom'
+
+    if (hasDropEventListener.value) return emit('drop', edge, on, side, node.id)
 
     let patch: EdgePatch = {}
-    if (on === 'head') patch = { toNode: node, toSide: side }
-    if (on === 'tail') patch = { fromNode: node, fromSide: side }
+    if (on === 'head') patch = { toNode: node.id, toSide: side }
+    if (on === 'tail') patch = { fromNode: node.id, fromSide: side }
 
     storage.updateEdge(edge, patch)
   })
