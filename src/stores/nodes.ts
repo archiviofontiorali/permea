@@ -65,19 +65,11 @@ export const useCanvasStore = defineStore('canvas', {
   },
   getters: {},
   actions: {
+    // Node related CRUD methods and other
     getNode(id: string): Node {
       const result = this.nodes.find((item) => item.id === id)
       if (result === undefined) throw Error()
       return result
-    },
-    getEdge(id: string) {
-      const result = this.edges.find((item) => item.id === id)
-      if (result === undefined) throw Error()
-      return result
-    },
-    removeEdge(id: string) {
-      const index = this.edges.findIndex((item) => item.id === id)
-      this.edges.splice(index, 1)
     },
     top: (node: Node): number => node.y - node.height / 2,
     bottom: (node: Node): number => node.y + node.height / 2,
@@ -86,6 +78,34 @@ export const useCanvasStore = defineStore('canvas', {
     asMap() {
       this.nodes.reduce((acc, item) => ({ ...acc, [item.id]: item }), {})
     },
+    moveNode(id: string, x: number, y: number) {
+      const node = this.getNode(id)
+      if (node === undefined) throw Error()
+
+      node.x = x
+      node.y = y
+    },
+    moveNodeRelative(id: string, dx: number = 0, dy: number = 0) {
+      const node = this.getNode(id)
+      if (node === undefined) throw Error()
+      node.x += dx
+      node.y += dy
+    },
+    // Edge related CRUD methods
+    createEdge() {},
+    getEdge(id: string) {
+      const result = this.edges.find((item) => item.id === id)
+      if (result === undefined) throw Error()
+      return result
+    },
+    updateEdge(id: string, patch: EdgePatch) {
+      Object.assign(this.getEdge(id), patch)
+    },
+    deleteEdge(id: string) {
+      const index = this.edges.findIndex((item) => item.id === id)
+      this.edges.splice(index, 1)
+    },
+    // Demo related stuff
     demoSetup() {
       const nNodes = this.nodes.length
       for (let i = 0; i < DemoConfig.nodes; i++) {
@@ -108,22 +128,6 @@ export const useCanvasStore = defineStore('canvas', {
           })
         this.nodes.push(node)
       }
-    },
-    moveNode(id: string, x: number, y: number) {
-      const node = this.getNode(id)
-      if (node === undefined) throw Error()
-
-      node.x = x
-      node.y = y
-    },
-    moveNodeRelative(id: string, dx: number = 0, dy: number = 0) {
-      const node = this.getNode(id)
-      if (node === undefined) throw Error()
-      node.x += dx
-      node.y += dy
-    },
-    updateEdge(id: string, patch: EdgePatch) {
-      Object.assign(this.getEdge(id), patch)
     },
   },
 })
