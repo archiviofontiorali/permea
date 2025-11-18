@@ -71,23 +71,13 @@ export const useCanvasStore = defineStore('canvas', {
       if (result === undefined) throw Error()
       return result
     },
-    top: (node: Node): number => node.y - node.height / 2,
-    bottom: (node: Node): number => node.y + node.height / 2,
-    left: (node: Node): number => node.x - node.width / 2,
-    right: (node: Node): number => node.x + node.width / 2,
-    asMap() {
-      this.nodes.reduce((acc, item) => ({ ...acc, [item.id]: item }), {})
-    },
     moveNode(id: string, x: number, y: number) {
       const node = this.getNode(id)
-      if (node === undefined) throw Error()
-
       node.x = x
       node.y = y
     },
     moveNodeRelative(id: string, dx: number = 0, dy: number = 0) {
       const node = this.getNode(id)
-      if (node === undefined) throw Error()
       node.x += dx
       node.y += dy
     },
