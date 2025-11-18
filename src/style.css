@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
+  --color-primary-300: var(--color-slate-300);
   --color-primary: var(--color-slate-500);
   --color-primary-700: var(--color-slate-700);
   --color-debug: hsla(273.41, 100%, 63.73%, 0.5);

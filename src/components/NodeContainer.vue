@@ -29,6 +29,7 @@ function style(node: Node) {
     `,
   }
 }
+
 const nodesDefault = computed(() => (nodes === undefined ? storage.nodes : nodes))
 const hasMoveEventListener = computed(() => !!getCurrentInstance()?.vnode.props?.onMove)
 
@@ -48,15 +49,18 @@ interact('article.card > header.draggable').draggable({
   <article
     :data-node-id="node.id"
     :key="node.id"
-    class="card border-4"
+    class="card"
     :style="style(node)"
     v-for="node in nodesDefault"
   >
-    <header class="draggable flex flex-row justify-around align-middle">
-      <FiMoreHorizontal />
-      <FiMoreHorizontal />
-    </header>
-    <NodeCard :node="node" />
+    <header class="draggable absolute w-full h-full"></header>
+    <NodeCard class="relative m-4 p-4 bg-white" :node="node" />
+
+    <header class="handle handle-row top-1"></header>
+    <header class="handle handle-row bottom-1"></header>
+
+    <header class="handle handle-column left-1"></header>
+    <header class="handle handle-column right-1"></header>
   </article>
 </template>
 
@@ -73,8 +77,30 @@ article.card {
   background: var(--color-white);
   border-color: var(--color-primary);
 }
-article.card > header {
+article.card > header:first-child {
   background: var(--color-primary);
   color: var(--color-gray-300);
+}
+header.handle {
+  position: absolute;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary-300);
+}
+header.handle.handle-column {
+  top: 50%;
+  transform: translateY(-50%);
+  width: calc(var(--spacing) * 2);
+  height: calc(var(--spacing) * 8);
+}
+header.handle.handle-row {
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: calc(var(--spacing) * 8);
+  height: calc(var(--spacing) * 2);
+}
+
+.center {
+  transform: translate(-50%, -50%);
 }
 </style>

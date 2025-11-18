@@ -50,10 +50,10 @@ interact('.edge').draggable({
     },
   },
 })
-interact('article.card')
+interact('article.card > .handle')
   .dropzone({ accept: '.edge' })
   .on('drop', (event) => {
-    const node = storage.getNode(event.target.dataset.nodeId)
+    const node = storage.getNode(event.target.parentNode.dataset.nodeId)
     const edge = event.relatedTarget.dataset.edgeId
     const on = event.relatedTarget.dataset.on
 
