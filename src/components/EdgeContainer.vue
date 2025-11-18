@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import interact from 'interactjs'
-import { reactive } from 'vue'
+import { getCurrentInstance, reactive, computed } from 'vue'
 
-import type { Edge } from '@/stores/nodes'
+import type { Edge, EdgePatch, canvasSide } from '@/stores/nodes'
 import { useCanvasStore } from '@/stores/nodes'
 
 import type { View } from './BoardCanvas.vue'
@@ -28,10 +28,10 @@ const cursor = reactive<Cursor>({ id: null, on: null, point: { x: 0, y: 0, width
 
 const edgesDefault = computed(() => (edges === undefined ? storage.edges : edges))
 
-// const emit = defineEmits<{
-//   // Drop edge side over a new node side (need dropzones)
-//   (e: 'drop', id: string, on: 'head' | 'tail', side: canvasSide, node: string): void
-// }>()
+const emit = defineEmits<{
+  (e: 'drop', id: string, on: 'head' | 'tail', side: canvasSide, node: string | null): void
+}>()
+const hasDropEventListener = computed(() => !!getCurrentInstance()?.vnode.props?.onDrop)
 
 interact('path.edge').draggable({
   listeners: {
@@ -47,6 +47,23 @@ interact('path.edge').draggable({
     },
   },
 })
+interact('article.card')
+  .dropzone({ accept: '.edge' })
+  .on('drop', (event) => {
+    console.debug(event, event.dx)
+    const node = event.target.dataset.nodeId
+    const edge = event.relatedTarget.dataset.edgeId
+    const on = event.relatedTarget.dataset.on
+    const side = 'top'
+
+    if (hasDropEventListener.value) return emit('drop', edge, on, side, node)
+
+    let patch: EdgePatch = {}
+    if (on === 'head') patch = { toNode: node, toSide: side }
+    if (on === 'tail') patch = { fromNode: node, fromSide: side }
+
+    storage.updateEdge(edge, patch)
+  })
 
 function fromNode(edge: Edge) {
   if (cursor.id === edge.id && cursor.on === 'tail') return cursor.point
