@@ -8,9 +8,6 @@ import { useCanvasStore } from '@/stores/nodes'
 import type { View } from './BoardCanvas.vue'
 import EdgePath from './EdgePath.vue'
 
-const { edges, view } = defineProps<{ edges?: Edge[]; view: View }>()
-const storage = useCanvasStore()
-
 export interface Target {
   id?: string
   x: number
@@ -24,6 +21,9 @@ export interface Cursor {
   on: 'head' | 'tail' | null
   point: Target
 }
+
+const storage = useCanvasStore()
+const { edges, view } = defineProps<{ edges?: Edge[]; view: View }>()
 const cursor = reactive<Cursor>({ id: null, on: null, point: { x: 0, y: 0, width: 0, height: 0 } })
 
 const edgesDefault = computed(() => (edges === undefined ? storage.edges : edges))
@@ -50,6 +50,7 @@ interact('.edge').draggable({
     },
   },
 })
+
 interact('article.card > .handle')
   .dropzone({ accept: '.edge' })
   .on('drop', (event) => {

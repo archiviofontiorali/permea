@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import interact from 'interactjs'
-import { FiMoreHorizontal } from 'vue-icons-plus/fi'
 
 import { useCanvasStore } from '@/stores/nodes'
 import type { Node } from '@/stores/nodes'
