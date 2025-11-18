@@ -66,10 +66,19 @@ export const useCanvasStore = defineStore('canvas', {
   getters: {},
   actions: {
     // Node related CRUD methods and other
+    createNode() {
+      throw Error('Not Implemented')
+    },
     getNode(id: string): Node {
       const result = this.nodes.find((item) => item.id === id)
       if (result === undefined) throw Error()
       return result
+    },
+    updateNode() {
+      throw Error('Not Implemented')
+    },
+    deleteNode() {
+      throw Error('Not Implemented')
     },
     moveNode(id: string, x: number, y: number) {
       const node = this.getNode(id)
@@ -82,7 +91,9 @@ export const useCanvasStore = defineStore('canvas', {
       node.y += dy
     },
     // Edge related CRUD methods
-    createEdge() {},
+    createEdge() {
+      throw Error('Not Implemented')
+    },
     getEdge(id: string) {
       const result = this.edges.find((item) => item.id === id)
       if (result === undefined) throw Error()
