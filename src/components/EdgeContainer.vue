@@ -8,7 +8,7 @@ import { useCanvasStore } from '@/stores/nodes'
 import type { View } from './BoardCanvas.vue'
 import EdgePath from './EdgePath.vue'
 
-const { edges, view } = defineProps<{ edges: Edge[]; view: View }>()
+const { edges, view } = defineProps<{ edges?: Edge[]; view: View }>()
 const storage = useCanvasStore()
 
 export interface Target {

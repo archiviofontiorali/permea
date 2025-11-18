@@ -48,6 +48,13 @@ export interface Edge {
   color?: canvasColor
   label?: string
 }
+export interface EdgePatch {
+  fromNode?: string
+  fromSide?: canvasSide
+
+  toNode?: string
+  toSide?: canvasSide
+}
 
 export const useCanvasStore = defineStore('canvas', {
   state: () => {
@@ -115,11 +122,8 @@ export const useCanvasStore = defineStore('canvas', {
       node.x += dx
       node.y += dy
     },
-    updateEdge(id: string, patch: { fromNode?: string; toNode?: string }) {
-      const edge = this.getEdge(id)
-
-      if (patch.fromNode) edge.fromNode = patch.fromNode
-      if (patch.toNode) edge.toNode = patch.toNode
+    updateEdge(id: string, patch: EdgePatch) {
+      Object.assign(this.getEdge(id), patch)
     },
   },
 })
