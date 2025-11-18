@@ -33,7 +33,7 @@ const emit = defineEmits<{
 }>()
 const hasDropEventListener = computed(() => !!getCurrentInstance()?.vnode.props?.onDrop)
 
-interact('path.edge').draggable({
+interact('.edge').draggable({
   listeners: {
     move(event) {
       cursor.id = event.target.dataset.edgeId
