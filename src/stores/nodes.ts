@@ -2,6 +2,8 @@ import { sample } from 'underscore'
 import { defineStore } from 'pinia'
 import { DemoConfig } from '@/constants'
 
+import { v6 as uuid } from 'uuid'
+
 /** The canvasColor type is used to encode color data for nodes and edges. Colors attributes expect a string. Colors can be specified in hex format e.g. "#FF0000", or using one of the preset colors,  */
 export type Color = string
 export type Side = 'top' | 'right' | 'bottom' | 'left'
@@ -111,7 +113,7 @@ export const useCanvasStore = defineStore('canvas', {
       const nNodes = this.nodes.length
       for (let i = 0; i < DemoConfig.nodes; i++) {
         const node: Node = {
-          id: `card-${nNodes + i}`,
+          id: uuid(),
           type: 'text',
           x: Math.floor((2 * Math.random() - 1) * DemoConfig.offset),
           y: Math.floor((2 * Math.random() - 1) * DemoConfig.offset),
@@ -121,7 +123,7 @@ export const useCanvasStore = defineStore('canvas', {
         }
         if (nNodes + i > 0)
           this.edges.push({
-            id: `edge-${nNodes + i}`,
+            id: uuid(),
             fromNode: (sample(this.nodes) || node).id,
             toNode: node.id,
             fromSide: sample<Side[]>(DemoConfig.fromSideValues as Side[]),
