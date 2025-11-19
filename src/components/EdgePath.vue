@@ -2,9 +2,14 @@
 import { computed } from 'vue'
 
 import { canvas } from '@/constants'
-import type { Edge, Side } from '@/stores/nodes'
+import type { Side } from '@/stores/nodes'
 import type { Target } from './EdgeContainer.vue'
 
+interface Edge {
+  id: string
+  fromSide?: Side
+  toSide?: Side
+}
 interface Point {
   x: number
   y: number
