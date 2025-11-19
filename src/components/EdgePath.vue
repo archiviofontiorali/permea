@@ -15,7 +15,12 @@ interface Point {
   y: number
 }
 
-const { edge, from, to } = defineProps<{ edge: Edge; from: Target; to: Target }>()
+const { edge, from, to, hide } = defineProps<{
+  edge: Edge
+  from: Target
+  to: Target
+  hide?: boolean
+}>()
 
 function sideOffset(node: { width: number; height: number }, side?: Side) {
   let [sx, sy] = [0, 0]
@@ -43,15 +48,19 @@ const middle = computed<Point>(() => ({
 function path(head: Point, tail: Point) {
   return `M${tail.x} ${tail.y} L${head.x} ${head.y}`
 }
+
+const style = computed(() => ({
+  opacity: hide ? 0 : 1,
+}))
 </script>
 
 <template>
-  <g class="edge" :data-edge-id="edge.id" data-on="tail">
+  <g class="edge" :data-edge-id="edge.id" data-on="from" :style="style">
     <circle :cx="tail.x" :cy="tail.y" :r="canvas.vertexRadius" />
     <path :d="path(tail, middle)" />
   </g>
-  <circle :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" />
-  <g class="edge" :data-edge-id="edge.id" data-on="head">
+  <circle :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" :style="style" />
+  <g class="edge" :data-edge-id="edge.id" data-on="to" :style="style">
     <path :d="path(head, middle)" />
     <circle :cx="head.x" :cy="head.y" :r="canvas.vertexRadius" />
   </g>
