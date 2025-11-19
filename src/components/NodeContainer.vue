@@ -55,11 +55,11 @@ interact('article.card > header.draggable').draggable({
     <header class="draggable absolute w-full h-full"></header>
     <NodeCard class="relative m-4 p-4 bg-white" :node="node" />
 
-    <header class="handle handle-row top-1"></header>
-    <header class="handle handle-row bottom-1"></header>
+    <header class="handle handle-row top-1" data-side="top"></header>
+    <header class="handle handle-row bottom-1" data-side="bottom"></header>
 
-    <header class="handle handle-column left-1"></header>
-    <header class="handle handle-column right-1"></header>
+    <header class="handle handle-column left-1" data-side="left"></header>
+    <header class="handle handle-column right-1" data-side="right"></header>
   </article>
 </template>
 
