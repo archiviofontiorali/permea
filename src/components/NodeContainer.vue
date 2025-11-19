@@ -74,7 +74,8 @@ article.card {
 
 article.card {
   background: var(--color-white);
-  border-color: var(--color-primary);
+  border-width: 2px;
+  border-color: var(--color-primary-700);
 }
 article.card > header:first-child {
   background: var(--color-primary);
