@@ -1,137 +1,109 @@
 <script setup lang="ts">
 import interact from 'interactjs'
-import { getCurrentInstance, reactive, computed } from 'vue'
 
-import type { Edge, EdgePatch, EdgeCreate, Side } from '@/stores/nodes'
+import { computed, reactive } from 'vue'
+
 import { useCanvasStore } from '@/stores/nodes'
+import type { Edge, EdgePatch } from '@/stores/nodes'
+import { side } from '@/utils'
 
-import type { View } from './BoardCanvas.vue'
 import EdgePath from './EdgePath.vue'
+import type { Target } from './EdgePath.vue'
+import type { View } from './BoardCanvas.vue'
 
-export interface Target {
-  id?: string | null
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
-export interface Handler {
+interface Cursor {
   id: string | null
-  from: Target
-  to: Target
-  side: Side | null
+  on: 'from' | 'to'
+  target: Target
 }
 
 const storage = useCanvasStore()
-const { edges, view } = defineProps<{ edges?: Edge[]; view: View }>()
-const handle = reactive<Handler>({
-  id: null,
-  from: { id: null, x: 0, y: 0, width: 0, height: 0 },
-  to: { id: null, x: 0, y: 0, width: 0, height: 0 },
-  side: null,
-})
+const { edges: edges_, view } = defineProps<{ edges?: Edge[]; view: View }>()
 
-const edgesDefault = computed(() => (edges === undefined ? storage.edges : edges))
+const cursor: Cursor = reactive({ id: null, on: 'from', target: { x: 0, y: 0 } })
+const edges = computed(() => (edges_ ? edges_ : storage.edges))
 
-const emit = defineEmits<{
-  (e: 'drop', id: string, on: 'from' | 'to', side: Side, node: string | null): void
-}>()
-const hasDropEventListener = computed(() => !!getCurrentInstance()?.vnode.props?.onDrop)
+function target(edge: Edge, cursor: Cursor, on: 'from' | 'to'): Target {
+  if (edge.id === cursor.id && cursor.on === on) return cursor.target
+  return storage.getNode(edge[`${on}Node`])
+}
 
-interact('.edge, article.card > .handle').draggable({
+// NOTE: card query cannot be the same as in EdgeBuilder otherwise only one listener is preserved
+const query = reactive({ edge: `.edge`, card: `.card > *` })
+
+interact(query.edge).draggable({
   listeners: {
     start(event) {
-      if (event.target.classList.contains('handle')) {
-        const node = storage.getNode(event.target.parentNode.dataset.nodeId)
-        handle.id = 'handle'
-        handle.side = event.target.dataset.side
-        Object.assign(handle.from, node)
-      }
+      console.debug(`Initiate movement of edge: ${event.target.dataset.edgeId}`)
     },
     move(event) {
-      const on: 'from' | 'to' = event.target.dataset.on ?? 'to'
+      // EdgePath set two data attribute: `edge-id` and `on`
+      const id: string = event.target.dataset.edgeId
+      const on: 'from' | 'to' = event.target.dataset.on
+      const x = event.clientX - view.x
+      const y = event.clientY - view.y
 
-      handle.id = event.target.dataset.edgeId ?? handle.id
-      handle[on].id = 'cursor'
-      handle[on].x = (event.clientX - view.x) / view.scale
-      handle[on].y = (event.clientY - view.y) / view.scale
+      // Set cursor object to actual edge, on side and cursor position
+      cursor.id = id
+      cursor.on = on
+      cursor.target.x = x / view.scale
+      cursor.target.y = y / view.scale
 
-      // Needed to evaluate side when dropped
-      event.target.dataset.x = event.clientX - view.x
-      event.target.dataset.y = event.clientY - view.y
+      // Save cursor x, y on HTML element to allow retrieving position on dropping
+      event.target.dataset.x = x
+      event.target.dataset.y = y
     },
-    end() {
-      handle.id = null
-      handle.side = null
-      handle.from.id = null
-      handle.to.id = null
+    end(event) {
+      console.log(`Disabling cursor from edge ${event.target.dataset.edgeId}`)
+      cursor.id = null
     },
   },
 })
 
-interact('article.card').dropzone({
-  accept: '.edge, article.card > .handle',
-  ondrop: function (event) {
-    const node = storage.getNode(event.target.dataset.nodeId)
-    const edge = event.relatedTarget.dataset.edgeId ?? handle.id
+interact(query.card).dropzone({
+  accept: query.edge,
+  ondrop(event) {
+    // event.relatedTarget is the edge moved
+    const id = event.relatedTarget.dataset.edgeId
+    const on = event.relatedTarget.dataset.on
 
-    const on: 'from' | 'to' = event.relatedTarget.dataset.on ?? 'to'
+    // card dropzone are supposed to expose a node-id data attribute pointing ro existing node
+    // To allow for external dropzone children must be used, so id is retrieved with parentNode
+    const node = storage.getNode(event.target.parentNode.dataset.nodeId)
+
+    console.debug(`Dropped edge ${id} over card ${node.id}`)
+
     const dx = event.relatedTarget.dataset.x - node.x
     const dy = event.relatedTarget.dataset.y - node.y
 
-    let side: Side = dx > 0 ? 'right' : 'left'
-    const [w, h] = [node.width, node.height]
-    if (dy < Math.min((h / w) * dx, (-h / w) * dx)) side = 'top'
-    if (dy > Math.max((h / w) * dx, (-h / w) * dx)) side = 'bottom'
-
-    if (hasDropEventListener.value) return emit('drop', edge, on, side, node.id)
-
     let patch: EdgePatch = {}
-    if (on === 'to') patch = { toNode: node.id, toSide: side }
-    if (on === 'from') patch = { fromNode: node.id, fromSide: side }
+    if (on === 'from') patch = { fromNode: node.id, fromSide: side(node, dx, dy) }
+    if (on === 'to') patch = { toNode: node.id, toSide: side(node, dx, dy) }
 
-    if (handle.id !== 'handle') return storage.updateEdge(edge, patch)
-
-    if (handle.from.id === undefined) throw Error()
-    if (handle.from.id === null) throw Error()
-
-    patch.fromNode = handle.from.id
-    patch.fromSide = handle.side ? handle.side : undefined
-    return storage.createEdge(patch as EdgeCreate)
+    // TODO: missing emits when callback is set (see _EdgeContainer.vue)
+    storage.updateEdge(id, patch)
   },
 })
-
-interact(':not(article.card)').dropzone({
-  accept: '.edge',
-  ondrop: function (event) {
-    const edge = event.relatedTarget.dataset.edgeId
-    storage.deleteEdge(edge)
+interact(`:not(${query.card})`).dropzone({
+  accept: query.edge, // NOTE: accept seems to not working
+  ondrop(event) {
+    const id = event.relatedTarget.dataset.edgeId
+    console.debug(`Dropped edge ${id} over background`)
+    storage.deleteEdge(id)
   },
 })
-
-function fromNode(edge: Edge): Target {
-  return handle.id === edge.id && handle.from.id != null
-    ? handle.from
-    : storage.getNode(edge.fromNode)
-}
-function toNode(edge: Edge) {
-  return handle.id === edge.id && handle.to.id != null ? handle.to : storage.getNode(edge.toNode)
-}
 </script>
 
 <template>
   <EdgePath
     :key="edge.id"
-    :edge="edge"
-    :from="fromNode(edge)"
-    :to="toNode(edge)"
-    v-for="edge in edgesDefault"
-  />
-  <EdgePath
-    :edge="{ id: handle.id, fromSide: handle.side ? handle.side : undefined }"
-    :from="handle.from"
-    :to="handle.to"
-    :hide="!(handle.id === 'handle' && handle.from.id !== null && handle.to.id === 'cursor')"
+    :id="edge.id"
+    class="edge"
+    :from="target(edge, cursor, 'from')"
+    :to="target(edge, cursor, 'to')"
+    :from-side="edge.fromSide"
+    :to-side="edge.toSide"
+    v-for="edge in edges"
   />
 </template>
+<style scoped></style>

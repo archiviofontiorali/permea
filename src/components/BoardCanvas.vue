@@ -16,6 +16,7 @@ import { BackgroundGrid as BG } from '@/constants'
 
 import NodeContainer from './NodeContainer.vue'
 import EdgeContainer from './EdgeContainer.vue'
+import EdgeBuilder from './EdgeBuilder.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
 
@@ -108,6 +109,7 @@ function zoomOut() {
 
       <g id="canvas-edges-wrapper" :style="scaleTraslateView">
         <EdgeContainer :view="view" />
+        <EdgeBuilder :view="view" />
       </g>
     </svg>
 
