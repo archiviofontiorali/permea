@@ -34,28 +34,26 @@ export interface LinkNode extends GenericNode {
 export type Node = TextNode | LinkNode
 
 // For specifics about implementation go to https://jsoncanvas.org/spec/1.0/
-export interface Edge {
-  id: string
-
+export interface EdgePatch {
   /** is the node id where the connection starts. */
-  fromNode: string
+  fromNode?: string
   fromSide?: Side
   fromEnd?: End // default: none
 
   /** is the node id where the connection ends. */
-  toNode: string
+  toNode?: string
   toSide?: Side
   toEnd?: End // default: arrow
 
   color?: Color
   label?: string
 }
-export interface EdgePatch {
-  fromNode?: string
-  fromSide?: Side
-
-  toNode?: string
-  toSide?: Side
+export interface EdgeCreate extends EdgePatch {
+  fromNode: string
+  toNode: string
+}
+export interface Edge extends EdgeCreate {
+  id: string
 }
 
 export const useCanvasStore = defineStore('canvas', {
@@ -93,8 +91,8 @@ export const useCanvasStore = defineStore('canvas', {
       node.y += dy
     },
     // Edge related CRUD methods
-    createEdge() {
-      throw Error('Not Implemented')
+    createEdge(edge: EdgeCreate) {
+      this.edges.push({ id: uuid(), ...edge })
     },
     getEdge(id: string) {
       const result = this.edges.find((item) => item.id === id)
