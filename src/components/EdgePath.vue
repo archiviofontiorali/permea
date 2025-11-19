@@ -3,40 +3,42 @@ import { computed } from 'vue'
 
 import { canvas } from '@/constants'
 import type { Side } from '@/stores/nodes'
-import type { Target } from './EdgeContainer.vue'
 
-interface Edge {
-  id: string
-  fromSide?: Side
-  toSide?: Side
-}
 interface Point {
   x: number
   y: number
 }
+export interface Target extends Point {
+  id?: string
+  width?: number
+  height?: number
+}
 
-const { edge, from, to, hide } = defineProps<{
-  edge: Edge
+interface EdgeProps {
+  id: string
   from: Target
   to: Target
-  hide?: boolean
-}>()
+  fromSide?: Side
+  toSide?: Side
+}
 
-function sideOffset(node: { width: number; height: number }, side?: Side) {
+const { id, from, to, fromSide, toSide } = defineProps<EdgeProps>()
+
+function sideOffset(node: Target, side?: Side) {
   let [sx, sy] = [0, 0]
-  if (side === 'top') sy -= node.height / 2
-  if (side === 'left') sx -= node.width / 2
-  if (side === 'right') sx += node.width / 2
-  if (side === 'bottom') sy += node.height / 2
+  if (side === 'top' && node.height) sy -= node.height / 2
+  if (side === 'left' && node.width) sx -= node.width / 2
+  if (side === 'right' && node.width) sx += node.width / 2
+  if (side === 'bottom' && node.height) sy += node.height / 2
   return { dx: sx, dy: sy }
 }
 
 const tail = computed<Point>(() => {
-  const { dx, dy } = sideOffset(from, edge.fromSide)
+  const { dx, dy } = sideOffset(from, fromSide)
   return { x: from.x + dx, y: from.y + dy }
 })
 const head = computed<Point>(() => {
-  const { dx, dy } = sideOffset(to, edge.toSide)
+  const { dx, dy } = sideOffset(to, toSide)
   return { x: to.x + dx, y: to.y + dy }
 })
 
@@ -49,18 +51,16 @@ function path(head: Point, tail: Point) {
   return `M${tail.x} ${tail.y} L${head.x} ${head.y}`
 }
 
-const style = computed(() => ({
-  opacity: hide ? 0 : 1,
-}))
+const style = computed(() => ({}))
 </script>
 
 <template>
-  <g class="edge" :data-edge-id="edge.id" data-on="from" :style="style">
+  <g :class="$attrs.class" :data-edge-id="id" data-on="from" :style="style">
     <circle :cx="tail.x" :cy="tail.y" :r="canvas.vertexRadius" />
     <path :d="path(tail, middle)" />
   </g>
   <circle :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" :style="style" />
-  <g class="edge" :data-edge-id="edge.id" data-on="to" :style="style">
+  <g :class="$attrs.class" :data-edge-id="id" data-on="to" :style="style">
     <path :d="path(head, middle)" />
     <circle :cx="head.x" :cy="head.y" :r="canvas.vertexRadius" />
   </g>
@@ -76,10 +76,10 @@ circle {
   fill: var(--color-primary);
 }
 
-.edge:hover path {
+g:hover[data-on] path {
   stroke-width: 10;
 }
-.edge:hover circle {
+g:hover circle {
   stroke: var(--color-primary);
   stroke-width: 4;
 }
