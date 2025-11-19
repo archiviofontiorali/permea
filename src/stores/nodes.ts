@@ -71,7 +71,7 @@ export const useCanvasStore = defineStore('canvas', {
     },
     getNode(id: string): Node {
       const result = this.nodes.find((item) => item.id === id)
-      if (result === undefined) throw Error()
+      if (result === undefined) throw Error(`Cannot find node with id: ${id}`)
       return result
     },
     updateNode() {
