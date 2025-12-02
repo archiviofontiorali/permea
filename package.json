@@ -19,9 +19,12 @@
   "dependencies": {
     "@interactjs/interactjs": "^1.10.27",
     "@tailwindcss/vite": "^4.1.12",
+    "@types/sparql-http-client": "^3.1.0",
     "@types/underscore": "^1.13.0",
     "interactjs": "^1.10.27",
     "pinia": "^3.0.3",
+    "sparql-http-client": "^3.1.0",
+    "sparqljs": "^3.7.3",
     "tailwindcss": "^4.1.12",
     "underscore": "^1.13.7",
     "uuid": "^13.0.0",
