@@ -19,6 +19,7 @@ import EdgeContainer from './EdgeContainer.vue'
 import EdgeBuilder from './EdgeBuilder.vue'
 
 import { useCanvasStore } from '@/stores/nodes'
+import SearchPage from './SearchPage.vue'
 
 const storage = useCanvasStore()
 
@@ -27,9 +28,10 @@ export interface View {
   y: number
   scale: number
   showAxes: boolean
+  showSearch: boolean
 }
 
-const view: Ref<View> = ref({ x: 0, y: 0, scale: 1.0, showAxes: true })
+const view: Ref<View> = ref({ x: 0, y: 0, scale: 1.0, showAxes: true, showSearch: true })
 resetView() // Execute on creation to center canvas
 
 interact('#canvas-background').draggable({
@@ -71,6 +73,8 @@ function zoomOut() {
       <div>View: {{ view }}</div>
       <!-- <div>Cursor: {{ cursor }}</div> -->
     </header>
+
+    <SearchPage />
 
     <!-- Menu for canvas position and sizing -->
     <header class="absolute navbar navbar-bottom pb-2 z-20 gap-2 bottom-2 flex justify-center">
