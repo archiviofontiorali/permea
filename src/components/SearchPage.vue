@@ -1,28 +1,21 @@
 <script setup lang="ts">
-import { hostname } from 'os'
-import SparqlClient from 'sparql-http-client'
-import { reactive, onMounted } from 'vue'
+import axios from 'axios'
+import { reactive } from 'vue'
 
-const endpoint_ = 'http://localhost:8000'
-const endpoint = 'http://localhost:8080'
-const query = `
-PREFIX dcterms: <http://purl.org/dc/terms/>
-
-SELECT ?resource ?property ?value
-WHERE {
-    ?resource dcterms:title ?title .
-    ?resource ?property ?value .
+function ns(value: string): string {
+  return value
+    .replace(`http://localhost:8000/api/`, 'permea:')
+    .replace('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf-syntax:')
+    .replace('http://www.w3.org/2000/01/rdf-schema#', 'rdf-schema:')
+    .replace('http://purl.org/dc/terms/', 'dcterms:')
+    .replace('http://omeka.org/s/vocabs/o#', 'omeka:')
 }
-ORDER BY ASC(?resource)
-LIMIT 10
-`
 
-console.log(query)
-
-const client = new SparqlClient({
-  endpointUrl: `${endpoint}/sparql`,
-  headers: {},
-})
+interface Query {
+  property: string
+  value: string
+  operation: 'eq' | 'in'
+}
 
 interface Result {
   resource: { value: string }
@@ -30,31 +23,84 @@ interface Result {
   value: { value: string }
 }
 
-const resources = reactive<Result[]>([])
+const properties = ['omeka:title', 'dcterms:title']
+const query = reactive<Query[]>([{ property: 'omeka:title', value: '', operation: 'eq' }])
+const results = reactive<Result[]>([])
 
-onMounted(() => {
-  const stream = client.query.select(query)
+function search() {
+  // const endpoint = 'http://localhost:8080/sparql'
+  const endpoint = 'http://localhost:3030/triplestore/sparql'
 
-  stream.on('data', (result) => {
-    resources.push(result)
-  })
-  stream.on('error', (err) => {
-    console.error(err)
-  })
-})
+  const constraints = query.map(
+    (q, index) => `?resource ${q.property} ${q.value ? `"${q.value}"` : `?value${index}`} .`,
+  )
+  const q = `
+    PREFIX omeka:   <http://omeka.org/s/vocabs/o#>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX fuseki:  <http://jena.apache.org/fuseki#>
+    PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX tdb2:    <http://jena.apache.org/2016/tdb#>
+    PREFIX tdb1:    <http://jena.hpl.hp.com/2008/tdb#>
+    PREFIX ja:      <http://jena.hpl.hp.com/2005/11/Assembler#>
+    PREFIX :        <#>
 
-function ns(value: string): string {
-  return value
-    .replace(`${endpoint_}/api/`, 'permea:')
-    .replace('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf-syntax:')
-    .replace('http://www.w3.org/2000/01/rdf-schema#', 'rdf-schema:')
-    .replace('http://purl.org/dc/terms/', 'dcterms:')
-    .replace('http://omeka.org/s/vocabs/o#', 'omeka:')
+    SELECT ?resource ?property ?value
+    WHERE {
+        ?resource ?property ?value .
+        ${constraints.join('\n')}
+    }
+    ORDER BY ASC(?resource)
+    LIMIT 10
+  `
+  // const q = 'SELECT * WHERE { ?resource ?property ?value . } LIMIT 10'
+
+  const params = { params: { query: q, format: 'json' } }
+  axios
+    .get(endpoint, params)
+    .then((response) => {
+      console.debug(response.data)
+      results.push(...response.data.results.bindings)
+    })
+    .catch(console.error)
+    .finally(() => console.debug(q))
 }
 </script>
 
 <template>
-  <p :key="key" v-for="[key, r] of resources.entries()">
-    {{ ns(r.resource.value) }} - {{ ns(r.property.value) }} - {{ ns(r.value.value) }}
-  </p>
+  <aside class="absolute w-[50%] h-full p-8 bg-slate-700 z-10">
+    <section id="search-form" class="grid grid-cols-2 gap-4">
+      <template :key="index" v-for="(q, index) in query">
+        <select
+          :name="`query-${index}`"
+          :id="`query-${index}`"
+          v-model="q.property"
+          class="p-1 bg-yellow-500"
+        >
+          <option
+            :value="p"
+            :selected="p === q.property"
+            :key="index"
+            v-for="(p, index) in properties"
+          >
+            {{ p }}
+          </option>
+        </select>
+
+        <input v-model="q.value" class="p-1 bg-red-400" />
+      </template>
+
+      <button class="bg-green-700 active:bg-green-500" @click="search">Search</button>
+    </section>
+
+    <section class="text-white grid grid-cols-3 gap-2">
+      <template :key="index" v-for="(r, index) of results">
+        <div class="py-2 overflow-auto">{{ ns(r.resource.value) }}</div>
+        <div class="py-2 overflow-auto">{{ ns(r.property.value) }}</div>
+        <div class="py-2 overflow-auto">{{ ns(r.value.value) }}</div>
+      </template>
+    </section>
+  </aside>
 </template>
+
+<style scoped></style>
