@@ -6,8 +6,13 @@ import Board from '@/components/BoardCanvas.vue'
   <Board class="w-full h-full" />
 </template>
 
-<style scoped>
+<style>
 #app {
+  background-color: var(--color-slate-700);
   min-height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
 }
 </style>
+
+<style scoped></style>
