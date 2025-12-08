@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 import { canvas } from '@/constants'
-import type { Side } from '@/stores/nodes'
+import type { Side } from '@/stores/storage'
 
 interface Point {
   x: number

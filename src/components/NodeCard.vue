@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Node } from '@/stores/nodes'
+import type { Node } from '@/stores/storage'
 
 const { node } = defineProps<{ node: Node }>()
 </script>

@@ -56,7 +56,7 @@ export interface Edge extends EdgeCreate {
   id: string
 }
 
-export const useCanvasStore = defineStore('canvas', {
+export const useStorageStore = defineStore('storage', {
   state: () => {
     return {
       nodes: [] as Node[],

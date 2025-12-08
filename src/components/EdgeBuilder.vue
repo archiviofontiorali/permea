@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import interact from 'interactjs'
-import { getCurrentInstance, reactive, computed } from 'vue'
+import { reactive } from 'vue'
 
 import type { Target } from './EdgePath.vue'
-import type { Node, Edge, EdgePatch, EdgeCreate, Side } from '@/stores/nodes'
+import type { Node, EdgeCreate, Side } from '@/stores/storage'
 import EdgePath from './EdgePath.vue'
-import type { View } from './BoardCanvas.vue'
-import { useCanvasStore } from '@/stores/nodes'
+import { useStorageStore } from '@/stores/storage'
 import { side } from '@/utils'
+import { useViewStore } from '@/stores/view'
 
 interface Cursor {
   from: Node | null
@@ -16,9 +16,8 @@ interface Cursor {
   side?: Side
 }
 
-const storage = useCanvasStore()
-
-const { view } = defineProps<{ view: View }>()
+const view = useViewStore()
+const storage = useStorageStore()
 
 const cursor = reactive<Cursor>({ from: null, to: null })
 const query = reactive({ card: `.card > header`, handle: `.card > header.handle` })
@@ -37,8 +36,8 @@ interact(query.handle).draggable({
       cursor.side = side
     },
     move(event) {
-      const x = event.clientX - view.x
-      const y = event.clientY - view.y
+      const x = event.clientX - view.center.x
+      const y = event.clientY - view.center.y
 
       cursor.to = { x: x / view.scale, y: y / view.scale }
 

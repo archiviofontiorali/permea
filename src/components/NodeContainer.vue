@@ -2,18 +2,21 @@
 import { computed } from 'vue'
 import interact from 'interactjs'
 
-import { useCanvasStore } from '@/stores/nodes'
-import type { Node } from '@/stores/nodes'
+import { useViewStore } from '@/stores/view'
+import { useStorageStore } from '@/stores/storage'
+import type { Node } from '@/stores/storage'
 
-import type { View } from './BoardCanvas.vue'
+// import type { View } from './BoardCanvas.vue'
 import NodeCard from './NodeCard.vue'
 import { getCurrentInstance } from 'vue'
 
-const storage = useCanvasStore()
-const { nodes, view } = defineProps<{ nodes?: Node[]; view: View }>()
+const view = useViewStore()
+
+const storage = useStorageStore()
+const { nodes } = defineProps<{ nodes?: Node[] }>()
 
 const emit = defineEmits<{
-  (e: 'move', id: string, dx: number, dy: number): void
+  move: [id: string, dx: number, dy: number]
 }>()
 
 function style(node: Node) {
@@ -22,7 +25,7 @@ function style(node: Node) {
     width: `${node.width}px`,
     height: `${node.height}px`,
     transform: `
-      translate(${view.x}px, ${view.y}px)
+      translate(${view.center.x}px, ${view.center.y}px)
       scale(${view.scale})
       translate(${node.x - node.width / 2}px, ${node.y - node.height / 2}px)
     `,

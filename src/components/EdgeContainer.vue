@@ -3,13 +3,13 @@ import interact from 'interactjs'
 
 import { computed, reactive } from 'vue'
 
-import { useCanvasStore } from '@/stores/nodes'
-import type { Edge, EdgePatch } from '@/stores/nodes'
+import { useViewStore } from '@/stores/view'
+import { useStorageStore } from '@/stores/storage'
+import type { Edge, EdgePatch } from '@/stores/storage'
 import { side } from '@/utils'
 
 import EdgePath from './EdgePath.vue'
 import type { Target } from './EdgePath.vue'
-import type { View } from './BoardCanvas.vue'
 
 interface Cursor {
   id: string | null
@@ -17,8 +17,10 @@ interface Cursor {
   target: Target
 }
 
-const storage = useCanvasStore()
-const { edges: edges_, view } = defineProps<{ edges?: Edge[]; view: View }>()
+const view = useViewStore()
+
+const storage = useStorageStore()
+const { edges: edges_ } = defineProps<{ edges?: Edge[] }>()
 
 const cursor: Cursor = reactive({ id: null, on: 'from', target: { x: 0, y: 0 } })
 const edges = computed(() => (edges_ ? edges_ : storage.edges))
@@ -40,8 +42,8 @@ interact(query.edge).draggable({
       // EdgePath set two data attribute: `edge-id` and `on`
       const id: string = event.target.dataset.edgeId
       const on: 'from' | 'to' = event.target.dataset.on
-      const x = event.clientX - view.x
-      const y = event.clientY - view.y
+      const x = event.clientX - view.center.x
+      const y = event.clientY - view.center.y
 
       // Set cursor object to actual edge, on side and cursor position
       cursor.id = id
