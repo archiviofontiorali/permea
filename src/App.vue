@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import Board from '@/components/BoardCanvas.vue'
+import HeaderDebugView from './components/HeaderDebugView.vue'
+import BoardCanvas from './components/BoardCanvas.vue'
 </script>
 
 <template>
-  <Board class="w-full h-full" />
+  <header-debug-view class="absolute w-full z-20" />
+  <BoardCanvas class="w-full h-full" />
 </template>
 
 <style>

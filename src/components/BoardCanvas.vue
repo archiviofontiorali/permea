@@ -69,11 +69,6 @@ function zoomOut() {
 
 <template>
   <main id="canvas-wrapper" class="absolute overflow-hidden">
-    <header class="absolute w-full pa-2 z-20 bg-purple-500 flex justify-around font-mono">
-      <div>View: {{ view }}</div>
-      <!-- <div>Cursor: {{ cursor }}</div> -->
-    </header>
-
     <SearchPage />
 
     <!-- Menu for canvas position and sizing -->
