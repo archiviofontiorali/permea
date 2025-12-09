@@ -5,9 +5,11 @@ import HeaderDebug from './components/HeaderDebug.vue'
 import MainBoard from './components/MainBoard.vue'
 import MainNavbar from './components/MainNavbar.vue'
 // import SearchPage from './SearchPage.vue'
+import SidebarSearch from './components/SidebarSearch.vue'
 
 import { useStorageStore } from './stores/storage'
 import { useViewStore } from './stores/view'
+import { useSPARQLStore } from './stores/sparql'
 
 interface State {
   debug: boolean
@@ -18,6 +20,7 @@ const state = reactive<State>({ debug: false, search: false })
 
 const view = useViewStore()
 const storage = useStorageStore()
+const search = useSPARQLStore()
 </script>
 
 <template>
@@ -29,17 +32,21 @@ const storage = useStorageStore()
     @toggle-debug="state.debug = !state.debug"
   ></main-navbar>
 
-  <div class="absolute w-full z-20 top-10" v-if="state.debug">
+  <div class="absolute w-full z-20 top-10 flex flex-col divide-y-2 divide-solid" v-if="state.debug">
     <header-debug>
       Nodes: {{ storage.nodes.length }} | Edges: {{ storage.edges.length }}
     </header-debug>
     <header-debug>{{ view.$state }}</header-debug>
     <header-debug>{{ state }}</header-debug>
+    <header-debug>{{ search.$state }}</header-debug>
   </div>
 
-  <main-board />
+  <sidebar-search
+    class="max-h-dvh absolute overflow-scroll w-[50%] _h-full z-20 pt-10"
+    v-if="state.search"
+  />
 
-  <!-- <SearchPage /> -->
+  <main-board />
 </template>
 
 <style>

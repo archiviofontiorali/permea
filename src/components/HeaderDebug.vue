@@ -3,7 +3,7 @@
 <template>
   <header
     id="header-debug"
-    class="pa-2 bg-debug font-mono flex justify-around"
+    class="p-1 bg-debug border-debug font-mono flex justify-around"
     :class="$attrs.class"
   >
     <slot />
