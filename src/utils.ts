@@ -1,5 +1,5 @@
 import type { Target } from '@/components/EdgePath.vue'
-import type { Side } from '@/stores/nodes'
+import type { Side } from '@/stores/storage'
 
 export function side(node: Target, dx: number, dy: number): Side | undefined {
   if (!node.width || !node.height) return undefined
