@@ -19,17 +19,13 @@ interface NamespaceResponse {
   'o:namespace_uri': string
   'o:prefix': string
 }
-interface PropertyResponse {
-  property: {
-    type: string
-    value: string
-  }
 
-  'o:term': string
+export interface Value {
+  type: 'uri' | 'literal'
+  value: string
 }
-
 export interface Binding {
-  [key: string]: { type: 'uri' | 'literal'; value: string }
+  [key: string]: Value
 }
 
 interface Response {

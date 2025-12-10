@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { DemoConfig } from '@/constants'
 
 import { v6 as uuid } from 'uuid'
+import type { Value } from './sparql'
 
 /** The canvasColor type is used to encode color data for nodes and edges. Colors attributes expect a string. Colors can be specified in hex format e.g. "#FF0000", or using one of the preset colors,  */
 export type Color = string
@@ -18,6 +19,7 @@ export interface GenericNode {
   width: number
   height: number
   color?: Color
+  metadata?: Map<string, Value>
 }
 
 export interface TextNode extends GenericNode {
