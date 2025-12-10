@@ -68,11 +68,14 @@ export const useStorageStore = defineStore('storage', {
   getters: {},
   actions: {
     // Node related CRUD methods and other
-    createNode() {
-      throw Error('Not Implemented')
+    createNode(node: Node) {
+      this.nodes.push(node)
+    },
+    findNode(id: string): Node | undefined {
+      return this.nodes.find((item) => item.id === id)
     },
     getNode(id: string): Node {
-      const result = this.nodes.find((item) => item.id === id)
+      const result = this.findNode(id)
       if (result === undefined) throw Error(`Cannot find node with id: ${id}`)
       return result
     },
