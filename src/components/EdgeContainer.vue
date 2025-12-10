@@ -105,6 +105,7 @@ interact(`:not(${query.card})`).dropzone({
     :to="target(edge, cursor, 'to')"
     :from-side="edge.fromSide"
     :to-side="edge.toSide"
+    :label="edge.label"
     v-for="edge in edges"
   />
 </template>

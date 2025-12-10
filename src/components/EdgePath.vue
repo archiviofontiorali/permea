@@ -20,9 +20,10 @@ interface EdgeProps {
   to: Target
   fromSide?: Side
   toSide?: Side
+  label?: string
 }
 
-const { id, from, to, fromSide, toSide } = defineProps<EdgeProps>()
+const { id, from, to, fromSide, toSide, label } = defineProps<EdgeProps>()
 
 function sideOffset(node: Target, side?: Side) {
   let [sx, sy] = [0, 0]
@@ -59,11 +60,15 @@ const style = computed(() => ({}))
     <circle :cx="tail.x" :cy="tail.y" :r="canvas.vertexRadius" />
     <path :d="path(tail, middle)" />
   </g>
-  <circle :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" :style="style" />
   <g :class="$attrs.class" :data-edge-id="id" data-on="to" :style="style">
     <path :d="path(head, middle)" />
     <circle :cx="head.x" :cy="head.y" :r="canvas.vertexRadius" />
   </g>
+  <circle :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" :style="style" v-if="!label" />
+  <template v-else>
+    <rect :x="middle.x - 75" :y="middle.y - 16" width="150" height="32" rx="8" ry="8" />
+    <text :x="middle.x - 68" :y="middle.y + 5">{{ label }}</text>
+  </template>
 </template>
 
 <style scoped>
@@ -73,6 +78,13 @@ path {
   stroke-width: 4;
 }
 circle {
+  fill: var(--color-primary);
+}
+
+text {
+  fill: var(--color-primary-300);
+}
+rect {
   fill: var(--color-primary);
 }
 
