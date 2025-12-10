@@ -59,8 +59,8 @@ function addNode(uri: string) {
     type: 'link',
     x: 0,
     y: 0,
-    width: 200,
-    height: 200,
+    width: 400,
+    height: 400,
     url: uri,
   }
   storage.createNode(node)
@@ -76,7 +76,6 @@ function addNode(uri: string) {
       })
     })
     .catch((error) => lastSearch.errors.push({ level: 'ERROR', value: error.response.data }))
-    .finally(() => console.debug(storage.findNode(uri)))
 }
 
 function showProperties(uri: string) {
