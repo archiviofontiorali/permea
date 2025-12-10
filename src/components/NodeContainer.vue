@@ -56,7 +56,8 @@ interact('article.card > header.draggable').draggable({
     v-for="node in nodesDefault"
   >
     <header class="draggable absolute w-full h-full"></header>
-    <NodeCard class="relative m-4 p-2 bg-white" :node="node" />
+
+    <NodeCard class="absolute left-4 top-4 right-4 bottom-4 bg-white" :node="node" />
 
     <header class="handle handle-row top-1" data-side="top"></header>
     <header class="handle handle-row bottom-1" data-side="bottom"></header>
