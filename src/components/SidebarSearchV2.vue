@@ -59,3 +59,31 @@ function search(query: string) {
     </section>
   </aside>
 </template>
+
+<style scoped>
+@reference "@/style.css";
+
+button,
+textarea,
+select,
+label {
+  padding: 0.5rem;
+  outline: 2px solid var(--color-primary-700);
+  border-radius: 0.5rem;
+}
+label {
+  font-weight: bold;
+  background-color: var(--color-primary-700);
+  color: var(--color-primary-300);
+}
+button:active {
+  background-color: var(--color-primary-700);
+  color: var(--color-primary-300);
+}
+td > svg {
+  color: var(--color-primary);
+}
+td > svg:active {
+  color: var(--color-primary-700);
+}
+</style>
