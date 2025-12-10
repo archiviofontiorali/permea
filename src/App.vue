@@ -5,7 +5,7 @@ import HeaderDebug from './components/HeaderDebug.vue'
 import MainBoard from './components/MainBoard.vue'
 import MainNavbar from './components/MainNavbar.vue'
 // import SearchPage from './SearchPage.vue'
-import SidebarSearch from './components/SidebarSearch.vue'
+import SidebarSearch from './components/SidebarSearchV2.vue'
 
 import { useStorageStore } from './stores/storage'
 import { useViewStore } from './stores/view'
@@ -42,7 +42,7 @@ const search = useSPARQLStore()
   </div>
 
   <sidebar-search
-    class="max-h-dvh absolute overflow-scroll w-[50%] _h-full z-20 pt-10"
+    class="min-h-dvh max-h-dvh absolute overflow-scroll w-[50%] _h-full z-20 pt-10"
     v-if="state.search"
   />
 
