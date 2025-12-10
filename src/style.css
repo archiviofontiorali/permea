@@ -10,3 +10,7 @@
 .debug {
   background-color: var(--color-debug);
 }
+
+.link {
+  color: var(--color-primary-700);
+}
