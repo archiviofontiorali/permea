@@ -49,6 +49,7 @@ export const useSPARQLStore = defineStore('sparql', {
     results: [] as Result[],
     properties: new Set<string>(),
     namespaces: new Map<string, string>([
+      ['permea-items', `${endpoint.omeka.api}/items/`],
       ['permea', `${endpoint.omeka.api}/`],
       ['foaf', 'http://xmlns.com/foaf/0.1/'],
       ['schema', 'https://schema.org/'],
