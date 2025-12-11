@@ -72,6 +72,11 @@ function addNode(uri: string) {
       const node = storage.getNode(uri)
       response.results.bindings.forEach(({ property, value }) => {
         if (!node.metadata) node.metadata = new Map()
+        if (value.type === 'uri') {
+          const other = storage.findNode(sparql.namespace(value.value))
+          if (other)
+            storage.createEdge({ fromNode: node.id, toNode: other.id, label: property.value })
+        }
         node.metadata.set(sparql.namespace(property.value), value)
       })
     })

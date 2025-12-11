@@ -13,6 +13,7 @@ const sparql = useSPARQLStore()
 const storage = useStorageStore()
 
 function addLink(parent: Node, uri: string, label?: string, x: number = 0, y: number = 0) {
+  uri = sparql.namespace(uri)
   if (storage.findNode(uri)) {
     console.warn({ level: 'WARNING', value: `Node with id: ${uri} already exists` })
     return
@@ -29,6 +30,11 @@ function addLink(parent: Node, uri: string, label?: string, x: number = 0, y: nu
         const node = storage.getNode(uri)
         response.results.bindings.forEach(({ property, value }) => {
           if (!node.metadata) node.metadata = new Map()
+          if (value.type === 'uri') {
+            const other = storage.findNode(sparql.namespace(value.value))
+            if (other)
+              storage.createEdge({ fromNode: node.id, toNode: other.id, label: property.value })
+          }
           node.metadata.set(sparql.namespace(property.value), value)
         })
       })
