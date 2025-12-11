@@ -52,9 +52,9 @@ const search = useSPARQLStore()
 <style>
 #app {
   /*background-color: var(--color-slate-700);*/
-  height: 100vh;
-  min-height: 100vh;
-  max-height: 100vh;
+  height: 100%;
+  /*min-height: 100vh;*/
+  /*max-height: 100vh;*/
   overflow: hidden;
 }
 </style>

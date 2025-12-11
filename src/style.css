@@ -7,6 +7,11 @@
   --color-debug: hsla(273.41, 100%, 63.73%, 0.5);
 }
 
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
 .debug {
   background-color: var(--color-debug);
 }
