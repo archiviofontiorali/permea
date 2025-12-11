@@ -53,6 +53,9 @@ function path(head: Point, tail: Point) {
 }
 
 const style = computed(() => ({}))
+
+const ch = 9.15 // 1ch in font-mono is 9.15px
+const em = 16 // 1em in font-mono is 16px
 </script>
 
 <template>
@@ -66,8 +69,17 @@ const style = computed(() => ({}))
   </g>
   <circle :cx="middle.x" :cy="middle.y" :r="canvas.vertexRadius" :style="style" v-if="!label" />
   <template v-else>
-    <rect :x="middle.x - 75" :y="middle.y - 16" width="150" height="32" rx="8" ry="8" />
-    <text :x="middle.x - 68" :y="middle.y + 5">{{ label }}</text>
+    <rect
+      :x="middle.x - (label.length * ch) / 2"
+      :y="middle.y - em"
+      :width="label.length * ch"
+      :height="2 * em"
+      rx="8"
+      ry="8"
+    />
+    <text :x="middle.x" :y="middle.y" text-anchor="middle" dominant-baseline="middle">{{
+      label
+    }}</text>
   </template>
 </template>
 
