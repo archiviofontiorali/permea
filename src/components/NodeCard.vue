@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useStorageStore, type LinkNode, type Node } from '@/stores/storage'
-import { FaDotCircle } from 'vue-icons-plus/fa'
+import { FaShareAlt, FaTrash } from 'vue-icons-plus/fa'
 import { computed } from 'vue'
 import { useSPARQLStore } from '@/stores/sparql'
 
@@ -39,20 +39,32 @@ function addLink(parent: Node, uri: string, label?: string, x: number = 0, y: nu
 
 <template>
   <main class="overflow-y-scroll" :height="`calc(${node.height} - 4rem)`">
-    <header class="text-center p-2 mb-2 bg-primary-700 text-primary-300">
-      <p class="text-xs text-left">{{ node.type }}</p>
-      <h1 class="font-bold text-xl">{{ title }}</h1>
+    <header class="text-center p-3 bg-primary-700 text-primary-300">
+      <h1 class="font-bold text-xl pb-1 text-nowrap overflow-x-scroll">
+        <a :href="node.url" v-if="node.type === 'link'">{{ title }}</a>
+        <template v-else>{{ title }}</template>
+      </h1>
+      <header class="flex flex-row justify-center gap-2 pt-1">
+        <div class="border rounded p-1 text-xs font-bold">{{ node.type }}</div>
+        <button class="border rounded p-1 active:text-white">
+          <fa-trash class="w-4 h-4" @click="storage.deleteNode(node.id)" />
+        </button>
+      </header>
     </header>
     <main
-      class="metadata p-1 grid gap-y-2 overflow-x-scroll items-center"
+      class="metadata p-3 grid gap-y-2 overflow-x-scroll items-center"
       style="grid-template-columns: auto auto auto"
     >
       <template :key="index" v-for="([p, v], index) of node.metadata">
-        <span class="text-primary active:text-primary-700 align-center pr-1">
-          <fa-dot-circle class="" v-if="v.type === 'uri'" @click="addLink(node, v.value, p)" />
-        </span>
         <label class="text-xs text-center py-1 px-2">{{ p }}</label>
         <p class="text-xs py-1 px-2 truncate" :title="v.value">{{ v.value }}</p>
+        <p class="text-white bg-primary active:bg-primary-700 text-center h-6">
+          <fa-share-alt
+            @click="addLink(node, v.value, p)"
+            v-if="v.type === 'uri'"
+            class="h-4 my-1"
+          />
+        </p>
       </template>
     </main>
   </main>

@@ -82,8 +82,13 @@ export const useStorageStore = defineStore('storage', {
     updateNode() {
       throw Error('Not Implemented')
     },
-    deleteNode() {
-      throw Error('Not Implemented')
+    deleteNode(id: string) {
+      for (const edge of this.edges) {
+        if (edge.fromNode === id) this.deleteEdge(edge.id)
+        if (edge.toNode === id) this.deleteEdge(edge.id)
+      }
+      const index = this.nodes.findIndex((item) => item.id === id)
+      this.nodes.splice(index, 1)
     },
     moveNode(id: string, x: number, y: number) {
       const node = this.getNode(id)
