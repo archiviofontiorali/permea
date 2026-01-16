@@ -75,7 +75,11 @@ function addNode(uri: string) {
         if (value.type === 'uri') {
           const other = storage.findNode(sparql.namespace(value.value))
           if (other)
-            storage.createEdge({ fromNode: node.id, toNode: other.id, label: property.value })
+            storage.createEdge({
+              fromNode: node.id,
+              toNode: other.id,
+              label: sparql.namespace(property.value),
+            })
         }
         node.metadata.set(sparql.namespace(property.value), value)
       })
